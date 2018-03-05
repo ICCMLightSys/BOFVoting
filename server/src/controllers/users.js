@@ -6,7 +6,7 @@ const sendInvitationEmail = require('../modules/invitationEmailSender');
 
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/users', async (req, res) => {
   if (await req.users.exists(req.body.email)) {
     throw new HttpResponseError('FORBIDDEN', 'There is already a user with that email address');
   }
@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
 // });
 
 // Used to change a user's password
-router.put('/password', async (req, res) => {
+router.put('/users/password', async (req, res) => {
   let email = req.authentication.email;
   let user = await req.users.findByEmail(email);
 

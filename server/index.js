@@ -61,9 +61,7 @@ glob('./src/controllers/**/*.js', {}, (err, files) => {
   }
 
   for (const controllerFile of files) {
-    const controllerName = path.basename(controllerFile, '.js').toLowerCase();
-
-    app.use(`/${controllerName}`, require(controllerFile));
+    app.use(require(controllerFile));
   }
 });
 

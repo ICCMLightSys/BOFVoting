@@ -102,4 +102,4 @@ class UsersStore extends Store {
   }
 }
 
-module.exports = UserStore;
+module.exports = UsersStore;
