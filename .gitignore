@@ -1,7 +1,5 @@
-configuration.js
 node_modules
 .idea
 npm-debug.log
-client
 yarn.lock
 yarn-error.log
