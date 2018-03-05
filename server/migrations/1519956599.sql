@@ -7,7 +7,7 @@ CREATE TABLE Conferences (
     isArchived BOOL NOT NULL DEFAULT 0,
     invitationCode CHAR(5),
     colorScheme CHAR(6), -- hex string
-    logo VARCHAR(255) NOT NULL,
+    logo VARCHAR(255),
     submissionStart DATETIME NOT NULL,
     submissionDeadline DATETIME NOT NULL,
     votingStart DATETIME NOT NULL,
@@ -16,28 +16,40 @@ CREATE TABLE Conferences (
     PRIMARY KEY (id)
 );
 
+INSERT INTO Conferences
+    (name, submissionStart, submissionDeadline, votingStart, votingDeadline)
+VALUES
+    ("First Conference", NOW(), NOW(), NOW(), NOW())
+;
+
 CREATE TABLE Sessions (
     id INT NOT NULL AUTO_INCREMENT,
+    conferenceId INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     published BOOL,
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (conferenceId) REFERENCES Conferences (id)
 );
 
 CREATE TABLE Rooms (
     id INT NOT NULL AUTO_INCREMENT,
+    conferenceId INT NOT NULL,
     name VARCHAR(255) NOT NULL,
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (conferenceId) REFERENCES Conferences (id)
 );
 
 CREATE TABLE Times (
     id INT NOT NULL AUTO_INCREMENT,
+    conferenceId INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     idx INT NOT NULL,
 
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    FOREIGN KEY (conferenceId) REFERENCES Conferences (id)
 );
 
 CREATE TABLE Slots (
