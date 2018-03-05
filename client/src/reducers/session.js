@@ -1,7 +1,10 @@
-import * as actionTypes from '../constants/actionTypes';
+import { RECEIVE_SESSIONS } from '../constants/actionTypes';
 
-export default function session(state = {}, action) {
+export default function session(state = [], action) {
   switch(action.type) {
+    case RECEIVE_SESSIONS: {
+      return action.payload.sessions;
+    }
     default: {
       return state;
     }
