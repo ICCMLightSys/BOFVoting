@@ -25,7 +25,7 @@ function validateUser(userData, expectPassword = true) {
   }
 }
 
-class UserStore extends Store {
+class UsersStore extends Store {
   async checkPassword(email, password) {
     let rows = await this.database.query('SELECT password FROM Users WHERE email = ?', [email]);
     if (rows.length === 0) {
