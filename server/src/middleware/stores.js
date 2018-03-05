@@ -17,8 +17,13 @@ glob('./src/stores//**/*Store.js', {}, (err, files) => {
 });
 
 module.exports = function storesMiddleware(request, response, next) {
-  Object.assign(request, stores);
-  request.db.setStores(stores);
+  const loadedStores = {};
+  for (const storeName of Object.keys(stores)) {
+    loadedStores[storeName] = new stores[storeName](request.db);
+  }
+
+  Object.assign(request, loadedStores);
+  request.db.setStores(loadedStores);
 
   next();
 };
