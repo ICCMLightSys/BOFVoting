@@ -4,6 +4,7 @@ import logo from './logo.svg';
 import './App.css';
 import { getCount } from './selectors/user';
 import { doSomethingToUser } from './actions/conference';
+import { NavLink } from 'react-router-dom';
 
 class App extends Component {
   render() {
@@ -17,6 +18,7 @@ class App extends Component {
           {this.props.count}
         </p>
         <input type="button" value="click" onClick={() => this.props.dispatch(doSomethingToUser())} />
+        <NavLink to="/voting">Voting</NavLink>
       </div>
     );
   }
