@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Checkbox, Form, Header, Radio, Table } from 'semantic-ui-react';
+import { Button, Checkbox, Form, Header, Radio, Table } from 'semantic-ui-react';
 import { getCount } from '../selectors/user';
 import * as voteTypes from '../constants/voteTypes';
 
@@ -19,75 +19,89 @@ class SessionsPage extends Component {
 
   render() {
     return (
-      <Table celled padded>
-        <Table.Header>
-          <Table.Row textAlign='center'>
-            <Table.HeaderCell singleLine>BOF sessions</Table.HeaderCell>
-            <Table.HeaderCell>Participate?</Table.HeaderCell>
-            <Table.HeaderCell>Facilitate?</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
+      <div>
+        <Table celled padded>
+          <Table.Header>
+            <Table.Row textAlign='center'>
+              <Table.HeaderCell singleLine>BOF sessions</Table.HeaderCell>
+              <Table.HeaderCell>Participate?</Table.HeaderCell>
+              <Table.HeaderCell>Facilitate?</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
 
-        <Table.Body>
-          {
-            this.props.sessions.map(({name, numVotes, numFacilitators, description}) =>
-              <Table.Row>
-                <Table.Cell>
-                  <Header as='h4'>
-                    {`${name} (${numVotes} votes, ${numFacilitators} facilitator${numFacilitators > 1 ? 's' : ''})`}
-                  </Header>
-                  {description}
-                </Table.Cell>
-                <Table.Cell singleLine>
-                  <Form>
-                    <Form.Field>
-                      <Radio
-                        label='Yes'
-                        name='votingGroup'
-                        value='yes'
-                        checked={this.state.votes[name] === voteTypes.YES}
-                        onChange={() => this.setState({ votes: { ...this.state.votes, [name]: voteTypes.YES } })}
-                      />
-                    </Form.Field>
-                    <Form.Field>
-                      <Radio
-                        label='Alt'
-                        name='votingGroup'
-                        value='alt'
-                        checked={this.state.votes[name] === voteTypes.ALT}
-                        onChange={() => this.setState({ votes: { ...this.state.votes, [name]: voteTypes.ALT } })}
-                      />
-                    </Form.Field>
-                    <Form.Field>
-                      <Radio
-                        label='No'
-                        name='votingGroup'
-                        value='no'
-                        checked={this.state.votes[name] === voteTypes.NO}
-                        onChange={() => this.setState({ votes: { ...this.state.votes, [name]: voteTypes.NO } })}
-                      />
-                    </Form.Field>
-                  </Form>
-                </Table.Cell>
-                <Table.Cell textAlign="center">
-                  <Checkbox onChange={(e, data) => {
-                    if(data.checked) {
-                      this.setState({ facilitate: [...this.state.facilitate, name] });
-                    } else {
-                      const facilitate = [...this.state.facilitate];
-                      const currentIndex = facilitate.indexOf(name);
-                      if(currentIndex !== -1) {
-                        facilitate.splice(currentIndex, 1);
-                        this.setState({ facilitate });
+          <Table.Body>
+            {
+              this.props.sessions.map(({name, numVotes, numFacilitators, description}) =>
+                <Table.Row>
+                  <Table.Cell>
+                    <Header as='h4'>
+                      {`${name} (${numVotes} votes, ${numFacilitators} facilitator${numFacilitators > 1 ? 's' : ''})`}
+                    </Header>
+                    {description}
+                  </Table.Cell>
+                  <Table.Cell singleLine>
+                    <Form>
+                      <Form.Field>
+                        <Radio
+                          label='Yes'
+                          name='votingGroup'
+                          value='yes'
+                          checked={this.state.votes[name] === voteTypes.YES}
+                          onChange={() => this.setState({ votes: { ...this.state.votes, [name]: voteTypes.YES } })}
+                        />
+                      </Form.Field>
+                      <Form.Field>
+                        <Radio
+                          label='Alt'
+                          name='votingGroup'
+                          value='alt'
+                          checked={this.state.votes[name] === voteTypes.ALT}
+                          onChange={() => this.setState({ votes: { ...this.state.votes, [name]: voteTypes.ALT } })}
+                        />
+                      </Form.Field>
+                      <Form.Field>
+                        <Radio
+                          label='No'
+                          name='votingGroup'
+                          value='no'
+                          checked={this.state.votes[name] === voteTypes.NO}
+                          onChange={() => this.setState({ votes: { ...this.state.votes, [name]: voteTypes.NO } })}
+                        />
+                      </Form.Field>
+                    </Form>
+                  </Table.Cell>
+                  <Table.Cell textAlign="center">
+                    <Checkbox onChange={(e, data) => {
+                      if(data.checked) {
+                        this.setState({ facilitate: [...this.state.facilitate, name] });
+                      } else {
+                        const facilitate = [...this.state.facilitate];
+                        const currentIndex = facilitate.indexOf(name);
+                        if(currentIndex !== -1) {
+                          facilitate.splice(currentIndex, 1);
+                          this.setState({ facilitate });
+                        }
                       }
-                    }
-                  }} />
-                </Table.Cell>
-              </Table.Row>
-            )
-          }
-        </Table.Body>
-      </Table>
+                    }} />
+                  </Table.Cell>
+                </Table.Row>
+              )
+            }
+          </Table.Body>
+        </Table>
+        <h4>Add Session</h4>
+        <Form>
+          <Form.Field>
+            <label>Name</label>
+            <input placeholder='Name' />
+          </Form.Field>
+          <Form.Field>
+            <label>Description</label>
+            <Form.TextArea placeholder='Description' />
+          </Form.Field>
+          <Button type='submit'>Submit</Button>
+        </Form>
+      </div>
     );
   }
 }
