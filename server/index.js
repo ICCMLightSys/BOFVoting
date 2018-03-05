@@ -24,7 +24,7 @@ const HTTP_METHODS = require('http').METHODS.map(method => method.toLowerCase())
 // Here be dragons.  We're monkey patching express.js to make it correctly handle errors thrown from async functions.
 (function () {
   const patch = (expressObject) => {
-    for (const functionToPatch of HTTP_METHODS.concat(['use'])) {
+    for (const functionToPatch of HTTP_METHODS) {
       let originalFunction = expressObject[functionToPatch];
 
       expressObject[functionToPatch] = function (...args) {
