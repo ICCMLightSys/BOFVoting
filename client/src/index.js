@@ -6,9 +6,10 @@ import { createStore, compose } from 'redux';
 import rootReducer from './reducers/rootReducer';
 import registerServiceWorker from './registerServiceWorker';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
+import 'semantic-ui-css/semantic.min.css';
 
 import App from './App';
-import VotingPage from './components/VotingPage';
+import VotingPage from './components/SessionsPage';
 
 const middleware = compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f
@@ -22,9 +23,9 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
     <Router>
-      <div>
+      <div className="container">
         <Route exact path="/" component={App} />
-        <Route path="/voting" component={VotingPage} />
+        <Route path="/sessions" component={VotingPage} />
       </div>
     </Router>
   </Provider>,
