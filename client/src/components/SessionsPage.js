@@ -59,6 +59,7 @@ class SessionsPage extends Component {
                           value="yes"
                           checked={this.props.votes[id] === voteTypes.YES}
                           onChange={() => this.props.dispatch(setVote(id, voteTypes.YES))}
+                          disabled={this.props.facilitate.includes(id)}
                         />
                       </Form.Field>
                       <Form.Field>
@@ -68,6 +69,7 @@ class SessionsPage extends Component {
                           value="alt"
                           checked={this.props.votes[id] === voteTypes.ALT}
                           onChange={() => this.props.dispatch(setVote(id, voteTypes.ALT))}
+                          disabled={this.props.facilitate.includes(id)}
                         />
                       </Form.Field>
                       <Form.Field>
@@ -77,6 +79,7 @@ class SessionsPage extends Component {
                           value="no"
                           checked={this.props.votes[id] === voteTypes.NO || this.props.votes[id] === undefined}
                           onChange={() => this.props.dispatch(setVote(id, voteTypes.NO))}
+                          disabled={this.props.facilitate.includes(id)}
                         />
                       </Form.Field>
                     </Form>
@@ -84,6 +87,9 @@ class SessionsPage extends Component {
                   <Table.Cell textAlign="center">
                     <Checkbox checked={this.props.facilitate.includes(id)} onChange={(e, data) => {
                       this.props.dispatch(setFacilitate(id, data.checked));
+                      if(data.checked) {
+                        this.props.dispatch(setVote(id, voteTypes.YES));
+                      }
                     }} />
                   </Table.Cell>
                 </Table.Row>
