@@ -6,13 +6,7 @@ const requireAuthentication = require('../middleware/authentication');
 const router = express.Router();
 
 router.get('/conferences/:conferenceId/sessions', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
-  let sessions = await req.sessions.findAll(req.params.conferenceId);
-
-  // TODO: use real vote data
-  sessions = sessions.map((session) => Object.assign({}, session, {
-    votes: 0,
-    facilitators: 0,
-  }));
+  let sessions = await req.sessions.findAll(req.params.conferenceId, true);
 
   res.status(200).send(sessions);
 });

@@ -49,8 +49,21 @@ class VotesStore extends Store {
       [userId, conferenceId]
     );
 
-    return votes.filter(vote => ['Yes', 'Alt'].includes(vote.voteType));
+    return votes.filter(isPositiveVote);
   }
+
+  async findForSession(sessionId) {
+    const votes = await this.database.query(
+      'SELECT voteType, sessionId, userId FROM Votes WHERE sessionId = ?',
+      [sessionId]
+    );
+
+    return votes.filter(isPositiveVote);
+  }
+}
+
+function isPositiveVote(vote) {
+  return ['Yes', 'Alt'].includes(vote.voteType);
 }
 
 module.exports = VotesStore;

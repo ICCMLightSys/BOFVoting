@@ -20,11 +20,48 @@ class SessionsStore extends Store {
     );
   }
 
-  async findAll(conferenceId) {
-    return await this.database.query(
-      'SELECT id, name, description FROM Sessions WHERE conferenceId = 1',
-      [conferenceId]
-    );
+  async findAll(conferenceId, includeVotesAndFacilitators = false) {
+    // TODO: investigate performance problems and revert back to this version
+    // const sessions = await this.database.query(
+    //   'SELECT id, name, description FROM Sessions WHERE conferenceId = 1',
+    //   [conferenceId]
+    // );
+    //
+    // if (includeVotesAndFacilitators) {
+    //   await Promise.all(sessions.map(this.addVotesAndFacilitators.bind(this)));
+    // }
+    //
+    // return sessions;
+
+    if (includeVotesAndFacilitators) {
+      return this.database.query(`
+        SELECT Sessions.id, Sessions.name, Sessions.description, IFNULL(counter.facilitatorCount, 0) as facilitators, voteCounter.votes
+          FROM Sessions
+          LEFT JOIN (
+            SELECT sessionId, COUNT(*) AS facilitatorCount FROM Facilitators GROUP BY sessionId
+          ) counter ON Sessions.id = counter.sessionId
+          LEFT JOIN (
+            SELECT sessionId, IFNULL((yesCount + altCount * 0.25), 0) as votes FROM
+              (
+                SELECT yesQuery.sessionId, yesCount, IFNULL(altCount, 0) AS altCount
+                FROM (SELECT sessionId, COUNT(*) as yesCount FROM Votes WHERE voteType = 'Yes' GROUP BY sessionId) yesQuery
+                LEFT JOIN (SELECT sessionId, COUNT(*) as altCount FROM Votes WHERE voteType = 'Alt' GROUP BY sessionId) altQuery
+                ON yesQuery.sessionId = altQuery.sessionId
+              UNION
+                SELECT altQuery.sessionId, IFNULL(yesCount, 0) AS yesCount, altCount
+                FROM (SELECT sessionId, COUNT(*) as yesCount FROM Votes WHERE voteType = 'Yes' GROUP BY sessionId) yesQuery
+                RIGHT JOIN (SELECT sessionId, COUNT(*) as altCount FROM Votes WHERE voteType = 'Alt' GROUP BY sessionId) altQuery
+                ON yesQuery.sessionId = altQuery.sessionId
+              ) innerVoteCounter
+          ) voteCounter on Sessions.id = voteCounter.sessionId
+        WHERE Sessions.conferenceId = ?;
+      `, [conferenceId]);
+    } else {
+      return this.database.query(
+        'SELECT id, name, description FROM Sessions WHERE conferenceId = ?',
+        [conferenceId]
+      );
+    }
   }
 
   async findAllFacilitatedBy(userId) {
@@ -32,6 +69,19 @@ class SessionsStore extends Store {
       `SELECT Sessions.* FROM Sessions INNER JOIN Facilitators ON Sessions.id = Facilitators.sessionId WHERE Facilitators.userId = ?`,
       [userId]
     );
+  }
+
+  async addVotesAndFacilitators(session) {
+    const votes = await this.database.stores.votes.findForSession(session.id);
+    console.log(`Votes: ${JSON.stringify(votes)}`);
+
+    const yesVotes = votes.filter(({ voteType }) => voteType === 'Yes').length;
+    const altVotes = votes.filter(({ voteType }) => voteType === 'Alt').length;
+
+    const facilitators = await this.database.stores.sessions.getFacilitators(session.id);
+
+    session.votes = yesVotes + (altVotes * 0.25);
+    session.facilitators = facilitators.length;
   }
 
   async insert(conferenceId, session) {
@@ -56,6 +106,13 @@ class SessionsStore extends Store {
     await this.database.query(
       'DELETE FROM Facilitators WHERE userId = ? AND sessionId = ?',
       [userId, sessionId]
+    );
+  }
+
+  getFacilitators(sessionId) {
+    return this.database.query(
+      'SELECT userId, sessionId FROM Facilitators WHERE sessionId = ?',
+      [sessionId]
     );
   }
 }
