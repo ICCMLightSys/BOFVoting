@@ -13,7 +13,13 @@ const router = express.Router();
 // });
 
 router.get('/conferences/:conferenceId/sessions', async (req, res) => {
-  const sessions = await req.sessions.findAll(req.params.conferenceId);
+  let sessions = await req.sessions.findAll(req.params.conferenceId);
+
+  // TODO: use real vote data
+  sessions = sessions.map((session) => Object.assign({}, session, {
+    votes: 0,
+    facilitators: 0,
+  }));
 
   res.status(200).send(sessions);
 });
