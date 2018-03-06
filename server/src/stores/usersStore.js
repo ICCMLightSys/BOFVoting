@@ -1,7 +1,6 @@
 let bcrypt = require('bcrypt');
 let { ValidationError, NotFoundError } = require('./errors.js');
 let Store = require('./store.js');
-let validator = require('validator');
 
 const BCRYPT_SALT_ROUNDS = 10;
 
@@ -10,12 +9,8 @@ function validateUser(userData, expectPassword = true) {
     throw new ValidationError('Data for new user not found');
   }
 
-  if (userData.email == null) {
-    throw new ValidationError('Users must have an email');
-  }
-
-  if (!validator.isEmail(userData.email)) {
-    throw new ValidationError(userData.email + ' is not a valid email address');
+  if (userData.username == null) {
+    throw new ValidationError('Users must have a username');
   }
 
   if (expectPassword) {
@@ -26,8 +21,8 @@ function validateUser(userData, expectPassword = true) {
 }
 
 class UsersStore extends Store {
-  async checkPassword(email, password) {
-    let rows = await this.database.query('SELECT password FROM Users WHERE email = ?', [email]);
+  async authenticate(username, password) {
+    let rows = await this.database.query('SELECT password, id FROM Users WHERE username = ?', [username]);
     if (rows.length === 0) {
       return false;
     }
@@ -39,7 +34,11 @@ class UsersStore extends Store {
           return;
         }
 
-        resolve(result);
+        if (result) {
+          resolve(rows[0].id);
+        } else {
+          resolve(false);
+        }
       });
     });
   }
@@ -48,7 +47,7 @@ class UsersStore extends Store {
     validateUser(userData);
 
     let hashedPassword = await bcrypt.hash(userData.password, BCRYPT_SALT_ROUNDS);
-    let result = await this.database.query('INSERT INTO Users (username, email, password) VALUES ("", ?, ?)', [userData.email, hashedPassword]);
+    let result = await this.database.query('INSERT INTO Users (username, password) VALUES (?, ?)', [userData.username, hashedPassword]);
 
     return result.insertId;
   }
@@ -84,8 +83,8 @@ class UsersStore extends Store {
     await this.database.query('UPDATE Users SET password = ? WHERE userId = ?', [newHash, userId]);
   }
 
-  async exists(email) {
-    let result = await this.database.query('SELECT COUNT(*) AS userCount FROM Users WHERE email = ?', [email]);
+  async exists(username) {
+    let result = await this.database.query('SELECT COUNT(*) AS userCount FROM Users WHERE username = ?', [username]);
 
     return result[0].userCount >= 1;
   }
@@ -97,6 +96,15 @@ class UsersStore extends Store {
         INNER JOIN Users ON Users.userId = OrganizationMap.userId
        WHERE Users.email = ? AND OrganizationMap.orgId = ?
     `, [userEmail, organizationId]);
+
+    return result[0].rowCount >= 1;
+  }
+
+  async hasAccessTo(userId, conferenceId) {
+    let result = await this.database.query(
+      'SELECT COUNT(*) as rowCount FROM Permissions WHERE userId = ? AND conferenceId = ?',
+      [userId, conferenceId]
+    );
 
     return result[0].rowCount >= 1;
   }

@@ -1,34 +1,23 @@
 const express = require('express');
-const passwordGenerator = require('generate-password');
 
 const HttpResponseError = require('../httpResponseError.js');
-const sendInvitationEmail = require('../modules/invitationEmailSender');
 
 const router = express.Router();
 
 router.post('/users', async (req, res) => {
-  if (await req.users.exists(req.body.email)) {
-    throw new HttpResponseError('FORBIDDEN', 'There is already a user with that email address');
+  if (await req.users.exists(req.body.username)) {
+    throw new HttpResponseError('FORBIDDEN', 'There is already a user with that username');
   }
 
   let userData = {
-    email: req.body.email,
-    password: passwordGenerator.generate({ length: 7, numbers: true }),
+    username: req.body.username,
+    password: req.body.password,
   };
 
-  let userId = await req.users.create(userData);
+  const userId = await req.users.create(userData);
+  const newUser = await req.users.find(userId);
 
-  let orgId = req.body.orgId;
-  if (!await req.users.isMemberOf(req.authentication.email, orgId)) {
-    throw new HttpResponseError('FORBIDDEN', 'You are not authorized to invite users to that organization');
-  }
-
-  await req.organizations.addMember(req.body.orgId, userId);
-  await sendInvitationEmail(userData.email, userData.password);
-
-  res.status(201).send({
-    result: 'success',
-  });
+  res.status(201).send(newUser);
 });
 
 // Used to edit a user's information: their email, for example.  This route

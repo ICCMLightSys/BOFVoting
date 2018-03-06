@@ -1,12 +1,23 @@
 let configuration = require('../../configuration.js');
 let jwt = require('jsonwebtoken');
 
-async function signIn(email, password, userStore) {
-  if (!await userStore.checkPassword(email, password)) {
+async function signIn(username, password, userStore) {
+  try {
+    const userId = await userStore.authenticate(username, password);
+
+    if (userId === false) {
+      return false;
+    }
+
+    return jwt.sign({
+      username,
+      userId,
+      signedIn: true,
+    }, configuration.authentication.encryptionKey);
+  } catch (err) {
+    console.log(`error: ${err.message}; returning false`);
     return false;
   }
-
-  return jwt.sign({ email, signedIn: true }, configuration.authentication.encryptionKey);
 }
 
 function validate(jwtToken) {
