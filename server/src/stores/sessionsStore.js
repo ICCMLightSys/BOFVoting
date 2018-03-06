@@ -35,13 +35,13 @@ class SessionsStore extends Store {
 
     if (includeVotesAndFacilitators) {
       return this.database.query(`
-        SELECT Sessions.id, Sessions.name, Sessions.description, IFNULL(counter.facilitatorCount, 0) as facilitators, voteCounter.votes
+        SELECT Sessions.id, Sessions.name, Sessions.description, IFNULL(counter.facilitatorCount, 0) as facilitators, IFNULL(voteCounter.votes, 0) as votes
           FROM Sessions
           LEFT JOIN (
             SELECT sessionId, COUNT(*) AS facilitatorCount FROM Facilitators GROUP BY sessionId
           ) counter ON Sessions.id = counter.sessionId
           LEFT JOIN (
-            SELECT sessionId, IFNULL((yesCount + altCount * 0.25), 0) as votes FROM
+            SELECT sessionId, (yesCount + altCount * 0.25) as votes FROM
               (
                 SELECT yesQuery.sessionId, yesCount, IFNULL(altCount, 0) AS altCount
                 FROM (SELECT sessionId, COUNT(*) as yesCount FROM Votes WHERE voteType = 'Yes' GROUP BY sessionId) yesQuery
