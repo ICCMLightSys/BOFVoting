@@ -23,12 +23,17 @@ class Database {
   }
 
   query(queryString, queryValues) {
+    const startTime = Date.now();
+
     return new Promise((resolve, reject) => {
       let callback = (error, results) => {
         if (error) {
           reject(error);
           return;
         }
+
+        const endTime = Date.now();
+        console.log(`${endTime - startTime} ms elapsed: '${queryString}'; ${JSON.stringify(queryValues)}`);
 
         resolve(results);
       };
