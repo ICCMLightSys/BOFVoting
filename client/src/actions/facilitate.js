@@ -37,18 +37,24 @@ export const failSetFacilitate = (error) => {
 
 export const fetchFacilitates = (conferenceId) => {
   return async (dispatch) => {
-    const response = await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/facilitate`, {
+    await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/facilitate`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       }
+    }).then((response) => {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      let json = response.json();
+      if (response.status === 200) {
+        dispatch(receiveFacilitates(json));
+      } else {
+        dispatch(failFetchFacilitates(json.error));
+      }
+    }).catch((error) => {
+      dispatch(failSetFacilitate(error.message));
     });
-    let json = await response.json();
-    if (response.status === 200) {
-      dispatch(receiveFacilitates(json));
-    } else {
-      dispatch(failFetchFacilitates(json.error));
-    }
   }
 };
 

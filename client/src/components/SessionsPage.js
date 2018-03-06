@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { Checkbox, Form, Header, Radio, Table } from 'semantic-ui-react';
 import * as voteTypes from '../constants/voteTypes';
 import { addSession, fetchSessions } from '../actions/session';
-import { setVote } from '../actions/vote';
-import { setFacilitate } from '../actions/facilitate';
+import { fetchVotes, setVote } from '../actions/vote';
+import { fetchFacilitates, setFacilitate } from '../actions/facilitate';
 
 class SessionsPage extends Component {
   constructor(props) {
@@ -24,6 +24,8 @@ class SessionsPage extends Component {
 
   componentDidMount() {
     this.props.dispatch(fetchSessions(this.props.conferenceId));
+    this.props.dispatch(fetchVotes(this.props.conferenceId));
+    this.props.dispatch(fetchFacilitates(this.props.conferenceId));
   }
 
   render() {

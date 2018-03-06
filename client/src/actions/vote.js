@@ -35,20 +35,26 @@ export const failSetVote = (error) => {
   return { type: actionTypes.FAIL_SET_VOTE, payload: { error } };
 };
 
-export const fetchVotes = (conferenceId, userId) => {
+export const fetchVotes = (conferenceId) => {
   return async (dispatch) => {
-    const response = await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/votes`, {
+    await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/votes`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
       }
+    }).then((response) => {
+      if (!response.ok) {
+        throw Error(response.statusText);
+      }
+      let json = response.json();
+      if (response.status === 200) {
+        dispatch(receiveVotes(json));
+      } else {
+        dispatch(failFetchVotes(json.error));
+      }
+    }).catch((error) => {
+      dispatch(failSetVote(error.message));
     });
-    let json = await response.json();
-    if (response.status === 200) {
-      dispatch(receiveVotes(json));
-    } else {
-      dispatch(failFetchVotes(json.error));
-    }
   }
 };
 
