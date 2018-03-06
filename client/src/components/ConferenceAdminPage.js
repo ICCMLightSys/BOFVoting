@@ -38,7 +38,7 @@ class SessionsPage extends Component {
 
           <Table.Body>
             {
-              this.props.sessions.map(({ id, name, numVotes, numFacilitators, description }) =>
+              this.props.sessions.map(({ id, name, votes, facilitators, description }) =>
                 <Table.Row key={id}>
                   <Table.Cell>
                     <Form>
@@ -46,7 +46,7 @@ class SessionsPage extends Component {
                         <input placeholder='Session name' defaultValue={name} />
                       </Form.Field>
                       <p>
-                        {`(${numVotes} votes, ${numFacilitators} facilitator${numFacilitators === 1 ? '' : 's'})`}
+                        {`(${votes} votes, ${facilitators} facilitator${facilitators === 1 ? '' : 's'})`}
                       </p>
                       <Form.Field>
                         <Form.TextArea placeholder='Session description' defaultValue={description} />

@@ -39,11 +39,14 @@ class SessionsPage extends Component {
 
           <Table.Body>
             {
-              this.props.sessions.map(({ id, name, numVotes, numFacilitators, description }) =>
+              this.props.sessions.map(({ id, name, votes, facilitators, description }) =>
                 <Table.Row key={id}>
                   <Table.Cell>
                     <Header as="h4">
-                      {`${name} (${numVotes} votes, ${numFacilitators} facilitator${numFacilitators === 1 ? '' : 's'})`}
+                      {
+                        `${name} (${votes} vote${votes === 1 ? '' : 's'}, ` +
+                        `${facilitators} facilitator${facilitators === 1 ? '' : 's'})`
+                      }
                     </Header>
                     {description}
                   </Table.Cell>
