@@ -11,6 +11,7 @@ import 'semantic-ui-css/semantic.min.css';
 
 import App from './App';
 import VotingPage from './components/SessionsPage';
+import { setJwtToken } from './actions/request';
 
 const middleware = compose(
   applyMiddleware(thunk),
@@ -21,6 +22,8 @@ const store = createStore(
   rootReducer,
   middleware
 );
+
+setJwtToken(store.getState().user.jwtToken);
 
 ReactDOM.render(
   <Provider store={store}>

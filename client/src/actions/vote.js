@@ -1,60 +1,43 @@
-import configuration from '../configuration';
 import * as actionTypes from '../constants/actionTypes';
+import { request } from './request';
 
 export function setVote(sessionId, voteType) {
   return async (dispatch, getState) => {
     const state = getState();
     const conferenceId = state.conference.conferenceId;
-    await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/sessions/${sessionId}/votes`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ voteType })
-    }).then((response) => {
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      let json = response.json();
-      if(response.status === 201) {
-        dispatch(receiveVote(json));
-      } else {
-        dispatch(failSetVote(json.error));
-      }
-    }).catch((error) => {
-      dispatch(failSetVote(error.message));
-    });
+    const method = 'POST';
+    const route = `/conferences/${conferenceId}/sessions/${sessionId}/votes`;
+    const data = { voteType: voteType.substring(0, 1).toUpperCase() + voteType.substring(1).toLowerCase() };
+    try {
+      const response = await request(method, route, data);
+      dispatch(receiveVote(sessionId, response.voteType));
+    } catch (error) {
+      dispatch(failSetVote(error));
+    }
   }
 }
 
-export const receiveVote = (vote) => {
-  return { type: actionTypes.RECEIVE_VOTE, payload: { vote } };
+export const receiveVote = (sessionId, voteType) => {
+  return { type: actionTypes.RECEIVE_VOTE, payload: { sessionId, voteType } };
 };
 
 export const failSetVote = (error) => {
   return { type: actionTypes.FAIL_SET_VOTE, payload: { error } };
 };
 
-export const fetchVotes = (conferenceId) => {
-  return async (dispatch) => {
-    await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/votes`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then((response) => {
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      let json = response.json();
-      if (response.status === 200) {
-        dispatch(receiveVotes(json));
-      } else {
-        dispatch(failFetchVotes(json.error));
-      }
-    }).catch((error) => {
-      dispatch(failSetVote(error.message));
-    });
+export const fetchVotes = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const conferenceId = state.conference.conferenceId;
+    const method = 'GET';
+    const route = `/conferences/${conferenceId}/votes`;
+    try {
+      const response = (await request(method, route))
+        .map(({ sessionId, voteType }) => ({ sessionId, voteType: voteType.toUpperCase() }));
+      dispatch(receiveVotes(response));
+    } catch (error) {
+      dispatch(failFetchVotes(error));
+    }
   }
 };
 

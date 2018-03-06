@@ -1,31 +1,21 @@
-import configuration from '../configuration';
 import * as actionTypes from '../constants/actionTypes';
+import { request } from './request';
 
-export function setFacilitate(sessionId, facilitate) {
+export const setFacilitate = (sessionId, facilitate) => {
   return async (dispatch, getState) => {
     const state = getState();
     const conferenceId = state.conference.conferenceId;
-    await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/sessions/${sessionId}/facilitate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ facilitate })
-    }).then((response) => {
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      let json = response.json();
-      if(response.status === 201) {
-        dispatch(receiveFacilitate(json));
-      } else {
-        dispatch(failSetFacilitate(json.error));
-      }
-    }).catch((error) => {
-      dispatch(failSetFacilitate(error.message));
-    });
+    const method = 'POST';
+    const route = `/conferences/${conferenceId}/sessions/${sessionId}/facilitate`;
+    const data = { facilitate };
+    try {
+      const response = await request(method, route, data);
+      dispatch(receiveFacilitate({ ...response, sessionId }));
+    } catch (error) {
+      dispatch(failSetFacilitate(error));
+    }
   }
-}
+};
 
 export const receiveFacilitate = ({ sessionId, facilitate }) => {
   return { type: actionTypes.RECEIVE_FACILITATE, payload: { sessionId, facilitate } };
@@ -35,26 +25,18 @@ export const failSetFacilitate = (error) => {
   return { type: actionTypes.FAIL_SET_FACILITATE, payload: { error } };
 };
 
-export const fetchFacilitates = (conferenceId) => {
-  return async (dispatch) => {
-    await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/facilitate`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then((response) => {
-      if (!response.ok) {
-        throw Error(response.statusText);
-      }
-      let json = response.json();
-      if (response.status === 200) {
-        dispatch(receiveFacilitates(json));
-      } else {
-        dispatch(failFetchFacilitates(json.error));
-      }
-    }).catch((error) => {
-      dispatch(failSetFacilitate(error.message));
-    });
+export const fetchFacilitates = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const conferenceId = state.conference.conferenceId;
+    const method = 'GET';
+    const route = `/conferences/${conferenceId}/facilitate`;
+    try {
+      const response = await request(method, route);
+      dispatch(receiveFacilitates(response));
+    } catch (error) {
+      dispatch(failFetchFacilitates(error));
+    }
   }
 };
 

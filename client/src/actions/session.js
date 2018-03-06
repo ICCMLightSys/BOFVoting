@@ -1,25 +1,18 @@
-import configuration from '../configuration';
 import * as actionTypes from '../constants/actionTypes';
+import { request } from './request';
 
 export function addSession(session) {
   return async (dispatch, getState) => {
     const state = getState();
     const conferenceId = state.conference.conferenceId;
-    let response = await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/sessions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ // TODO figure out if stringify is necessary
-        name: session.name,
-        description: session.description
-      })
-    });
-    let json = await response.json();
-    if(response.status === 201) {
-      dispatch(receiveSession(json));
-    } else {
-      dispatch(failAddSession(json.error));
+    const method = 'POST';
+    const route = `/conferences/${conferenceId}/sessions`;
+    const data = { name: session.name, description: session.description };
+    try {
+      const response = await request(method, route, data);
+      dispatch(receiveSession(response));
+    } catch (error) {
+      dispatch(failAddSession(error));
     }
   }
 }
@@ -34,17 +27,13 @@ export const failAddSession = (error) => {
 
 export const fetchSessions = (conferenceId) => {
   return async (dispatch) => {
-    const response = await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/sessions`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    let json = await response.json();
-    if (response.status === 200) {
-      dispatch(receiveSessions(json));
-    } else {
-      dispatch(failFetchSessions(json.error));
+    const method = 'GET';
+    const route = `/conferences/${conferenceId}/sessions`;
+    try {
+      const response = await request(method, route);
+      dispatch(receiveSessions(response));
+    } catch (error) {
+      dispatch(failFetchSessions(error));
     }
   }
 };
