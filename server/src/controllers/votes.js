@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/conferences/:conferenceId/sessions/:sessionId/votes', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   // TODO: validate vote type here or in model
 
-  await req.votes.setVote(req.authentication.userId, req.params.conferenceId, req.body.voteType);
+  await req.votes.setVote(req.authentication.userId, req.params.sessionId, req.body.voteType);
   res.status(201).send({ voteType: req.body.voteType });
 });
 
