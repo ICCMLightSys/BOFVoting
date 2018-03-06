@@ -1,11 +1,11 @@
 const express = require('express');
 const { HttpResponseError } = require('../httpResponseError');
+const { ensureUserHasAccessToConference } = require('../middleware/validation');
 const requireAuthentication = require('../middleware/authentication');
 
 const router = express.Router();
 
-// TODO: security
-router.get('/conferences/:conferenceId/sessions', async (req, res) => {
+router.get('/conferences/:conferenceId/sessions', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   let sessions = await req.sessions.findAll(req.params.conferenceId);
 
   // TODO: use real vote data
@@ -17,25 +17,20 @@ router.get('/conferences/:conferenceId/sessions', async (req, res) => {
   res.status(200).send(sessions);
 });
 
-// TODO: security
-router.post('/conferences/:conferenceId/sessions', async (req, res) => {
+router.post('/conferences/:conferenceId/sessions', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   const newSessionId = await req.sessions.insert(req.params.conferenceId, req.body);
   const newSession = await req.sessions.find(newSessionId);
 
   res.status(201).send(newSession);
 });
 
-router.get('/conferences/:conferenceId/facilitate', requireAuthentication, async (req, res) => {
+router.get('/conferences/:conferenceId/facilitate', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   const sessions = await req.sessions.findAllFacilitatedBy(req.authentication.userId);
 
   res.status(200).send(sessions.map(session => session.id));
 });
 
-router.post('/conferences/:conferenceId/sessions/:sessionId/facilitate', requireAuthentication, async (req, res) => {
-  if (!req.users.hasAccessTo(req.authentication.userId, req.params.conferenceId)) {
-    throw new HttpResponseError('FORBIDDEN', 'User does not have access to that conference');
-  }
-
+router.post('/conferences/:conferenceId/sessions/:sessionId/facilitate', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   if (typeof req.body !== 'object' || req.body.facilitate == null) {
     throw new HttpResponseError('BAD_REQUEST', 'Request body must include the facilitate property');
   }

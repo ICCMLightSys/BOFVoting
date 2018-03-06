@@ -1,29 +1,18 @@
 const express = require('express');
-const router = express.Router();
-
-const HttpResponseError = require('../httpResponseError');
-
+const { ensureUserHasAccessToConference } = require('../middleware/validation');
 const requireAuthentication = require('../middleware/authentication');
 
-router.post('/conferences/:conferenceId/sessions/:sessionId/votes', requireAuthentication, async (req, res) => {
-  if (!req.users.hasAccessTo(req.authentication.userId, req.params.conferenceId)) {
-    throw new HttpResponseError('FORBIDDEN', 'User does not have access to that conference');
-  }
+const router = express.Router();
 
+router.post('/conferences/:conferenceId/sessions/:sessionId/votes', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   // TODO: validate vote type here or in model
 
   await req.votes.setVote(req.authentication.userId, req.params.conferenceId, req.body.voteType);
-
   res.status(201).send({ voteType: req.body.voteType });
 });
 
-router.get('/conferences/:conferenceId/votes', requireAuthentication, async (req, res) => {
-  if (!req.users.hasAccessTo(req.authentication.userId, req.params.conferenceId)) {
-    throw new HttpResponseError('FORBIDDEN', 'User does not have access to that conference');
-  }
-
+router.get('/conferences/:conferenceId/votes', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   const votes = await req.votes.findForUserAndConference(req.authentication.userId, req.params.conferenceId);
-
   res.status(200).send(votes);
 });
 
