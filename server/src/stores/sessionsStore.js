@@ -95,6 +95,13 @@ class SessionsStore extends Store {
     return result.insertId;
   }
 
+  update(sessionId, newData) {
+    return this.database.query(
+      'UPDATE Sessions SET name = ?, description = ? WHERE id = ?',
+      [newData.name, newData.description, sessionId]
+    );
+  }
+
   async addFacilitator(sessionId, userId) {
     await this.database.query(
       'INSERT IGNORE INTO Facilitators (userId, sessionId) VALUES (?, ?)',

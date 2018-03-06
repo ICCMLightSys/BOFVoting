@@ -18,6 +18,15 @@ router.post('/conferences/:conferenceId/sessions', requireAuthentication, ensure
   res.status(201).send(newSession);
 });
 
+// TODO: handle 404 errors
+// TODO: require conference admin
+router.patch('/conferences/:conferenceId/sessions/:sessionId', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
+  await req.sessions.update(req.params.sessionId, req.body);
+
+  const editedSession = await req.sessions.find(req.params.sessionId);
+  res.status(200).send(editedSession);
+});
+
 router.get('/conferences/:conferenceId/facilitate', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   const sessions = await req.sessions.findAllFacilitatedBy(req.authentication.userId);
 
