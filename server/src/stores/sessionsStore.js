@@ -1,5 +1,17 @@
 let Store = require('./store.js');
 
+let { ValidationError } = require('./errors');
+
+function validateSession(sessionData) {
+  if (sessionData == null || typeof sessionData !== 'object') {
+    throw new ValidationError('Session data not found');
+  }
+
+  if (sessionData.name == null) {
+    throw new ValidationError('Sessions must have a name');
+  }
+}
+
 class SessionsStore extends Store {
   async find(sessionId) {
     return await this.database.query(
@@ -16,7 +28,7 @@ class SessionsStore extends Store {
   }
 
   async insert(conferenceId, session) {
-    // TODO: validate session
+    validateSession(session);
 
     const result = await this.database.query(
       'INSERT INTO Sessions (name, description, conferenceId) VALUES (?, ?, ?)'
