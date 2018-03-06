@@ -1,6 +1,6 @@
 const express = require('express');
 const { HttpResponseError } = require('../httpResponseError');
-const { ensureUserHasAccessToConference } = require('../middleware/validation');
+const { ensureUserHasAccessToConference, requireUserToBeAdmin } = require('../middleware/validation');
 const requireAuthentication = require('../middleware/authentication');
 
 const router = express.Router();
@@ -19,8 +19,7 @@ router.post('/conferences/:conferenceId/sessions', requireAuthentication, ensure
 });
 
 // TODO: handle 404 errors
-// TODO: require conference admin
-router.patch('/conferences/:conferenceId/sessions/:sessionId', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
+router.patch('/conferences/:conferenceId/sessions/:sessionId', requireAuthentication, ensureUserHasAccessToConference, requireUserToBeAdmin, async (req, res) => {
   await req.sessions.update(req.params.sessionId, req.body);
 
   const editedSession = await req.sessions.find(req.params.sessionId);

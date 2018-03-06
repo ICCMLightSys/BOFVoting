@@ -84,24 +84,32 @@ class UsersStore extends Store {
   }
 
   async exists(username) {
-    let result = await this.database.query('SELECT COUNT(*) AS userCount FROM Users WHERE username = ?', [username]);
+    const result = await this.database.query('SELECT COUNT(*) AS userCount FROM Users WHERE username = ?', [username]);
 
     return result[0].userCount >= 1;
   }
 
-  async isMemberOf(userEmail, organizationId) {
-    let result = await this.database.query(`
-      SELECT COUNT(*) AS rowCount
-      FROM OrganizationMap
-        INNER JOIN Users ON Users.userId = OrganizationMap.userId
-       WHERE Users.email = ? AND OrganizationMap.orgId = ?
-    `, [userEmail, organizationId]);
+  async isAdmin(userId, conferenceId) {
+    return await this.isSiteAdmin(userId) || await this.isConferenceAdmin(userId, conferenceId);
+  }
 
-    return result[0].rowCount >= 1;
+  async isSiteAdmin(userId) {
+    const result = await this.database.queryOne('SELECT isSiteAdmin FROM Users WHERE id = ?', [userId]);
+
+    return result.isSiteAdmin === 1;
+  }
+
+  async isConferenceAdmin(userId, conferenceId) {
+    const result = await this.database.query(
+      'SELECT COUNT(*) as rowCount FROM ConferenceAdmins WHERE userId = ? AND conferenceId = ?',
+      [userId, conferenceId]
+    );
+
+    return result[0].userCount >= 1;
   }
 
   async hasAccessTo(userId, conferenceId) {
-    let result = await this.database.query(
+    const result = await this.database.query(
       'SELECT COUNT(*) as rowCount FROM Permissions WHERE userId = ? AND conferenceId = ?',
       [userId, conferenceId]
     );
