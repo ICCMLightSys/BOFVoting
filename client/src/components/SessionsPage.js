@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Checkbox, Form, Header, Radio, Table } from 'semantic-ui-react';
-import { getCount } from '../selectors/user';
 import * as voteTypes from '../constants/voteTypes';
 import { addSession, fetchSessions } from '../actions/session';
+import { setVote } from '../actions/vote';
+import { setFacilitate } from '../actions/facilitate';
 
 class SessionsPage extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      votes: {
-        'Lorem Ipsum': voteTypes.NO,
-        'Lorem Ipsum v2.0': voteTypes.NO,
-      },
-      facilitate: []
+      facilitate: [],
     };
 
     this.handleAddSessionSubmit = this.handleAddSessionSubmit.bind(this);
@@ -26,7 +23,7 @@ class SessionsPage extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(fetchSessions(1)); // TODO don't hardcode conference ID
+    this.props.dispatch(fetchSessions(this.props.conferenceId));
   }
 
   render() {
@@ -34,7 +31,7 @@ class SessionsPage extends Component {
       <div>
         <Table celled padded>
           <Table.Header>
-            <Table.Row textAlign='center'>
+            <Table.Row textAlign="center">
               <Table.HeaderCell singleLine>BOF sessions</Table.HeaderCell>
               <Table.HeaderCell>Participate?</Table.HeaderCell>
               <Table.HeaderCell>Facilitate?</Table.HeaderCell>
@@ -43,10 +40,10 @@ class SessionsPage extends Component {
 
           <Table.Body>
             {
-              this.props.sessions.map(({name, numVotes, numFacilitators, description}) =>
-                <Table.Row>
+              this.props.sessions.map(({ id, name, numVotes, numFacilitators, description }) =>
+                <Table.Row key={id}>
                   <Table.Cell>
-                    <Header as='h4'>
+                    <Header as="h4">
                       {`${name} (${numVotes} votes, ${numFacilitators} facilitator${numFacilitators === 1 ? '' : 's'})`}
                     </Header>
                     {description}
@@ -55,45 +52,36 @@ class SessionsPage extends Component {
                     <Form>
                       <Form.Field>
                         <Radio
-                          label='Yes'
-                          name='votingGroup'
-                          value='yes'
-                          checked={this.state.votes[name] === voteTypes.YES}
-                          onChange={() => this.setState({ votes: { ...this.state.votes, [name]: voteTypes.YES } })}
+                          label="Yes"
+                          name="votingGroup"
+                          value="yes"
+                          checked={this.props.votes[id] === voteTypes.YES}
+                          onChange={() => this.props.dispatch(setVote(id, voteTypes.YES))}
                         />
                       </Form.Field>
                       <Form.Field>
                         <Radio
-                          label='Alt'
-                          name='votingGroup'
-                          value='alt'
-                          checked={this.state.votes[name] === voteTypes.ALT}
-                          onChange={() => this.setState({ votes: { ...this.state.votes, [name]: voteTypes.ALT } })}
+                          label="Alt"
+                          name="votingGroup"
+                          value="alt"
+                          checked={this.props.votes[id] === voteTypes.ALT}
+                          onChange={() => this.props.dispatch(setVote(id, voteTypes.ALT))}
                         />
                       </Form.Field>
                       <Form.Field>
                         <Radio
-                          label='No'
-                          name='votingGroup'
-                          value='no'
-                          checked={this.state.votes[name] === voteTypes.NO}
-                          onChange={() => this.setState({ votes: { ...this.state.votes, [name]: voteTypes.NO } })}
+                          label="No"
+                          name="votingGroup"
+                          value="no"
+                          checked={this.props.votes[id] === voteTypes.NO || this.props.votes[id] === undefined}
+                          onChange={() => this.props.dispatch(setVote(id, voteTypes.NO))}
                         />
                       </Form.Field>
                     </Form>
                   </Table.Cell>
                   <Table.Cell textAlign="center">
-                    <Checkbox onChange={(e, data) => {
-                      if(data.checked) {
-                        this.setState({ facilitate: [...this.state.facilitate, name] });
-                      } else {
-                        const facilitate = [...this.state.facilitate];
-                        const currentIndex = facilitate.indexOf(name);
-                        if(currentIndex !== -1) {
-                          facilitate.splice(currentIndex, 1);
-                          this.setState({ facilitate });
-                        }
-                      }
+                    <Checkbox checked={this.props.facilitate.includes(id)} onChange={(e, data) => {
+                      this.props.dispatch(setFacilitate(id, data.checked));
                     }} />
                   </Table.Cell>
                 </Table.Row>
@@ -105,13 +93,13 @@ class SessionsPage extends Component {
         <Form>
           <Form.Field>
             <label>Name</label>
-            <input ref={nameField => this.nameField = nameField} placeholder='Name' />
+            <input ref={nameField => this.nameField = nameField} placeholder="Name" />
           </Form.Field>
           <Form.Field>
             <label>Description</label>
-            <textarea ref={descriptionField => this.descriptionField = descriptionField} placeholder='Description' />
+            <textarea ref={descriptionField => this.descriptionField = descriptionField} placeholder="Description" />
           </Form.Field>
-          <Form.Button type='submit' onClick={this.handleAddSessionSubmit}>Submit</Form.Button>
+          <Form.Button type="submit" onClick={this.handleAddSessionSubmit}>Submit</Form.Button>
         </Form>
       </div>
     );
@@ -120,7 +108,9 @@ class SessionsPage extends Component {
 
 export default connect(
   state => ({
-    count: getCount(state),
-    sessions: state.session.sessions
+    conferenceId: state.conference.conferenceId,
+    sessions: state.session.sessions,
+    votes: state.vote.votes,
+    facilitate: state.facilitate.facilitate,
   })
 )(SessionsPage);

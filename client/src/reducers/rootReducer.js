@@ -1,12 +1,16 @@
 import { combineReducers } from 'redux';
-import user from './user';
-import session from './session';
 import conference from './conference';
+import session from './session';
+import user from './user';
+import vote from './vote';
+import facilitate from './facilitate';
 
 const root = combineReducers({
-  user,
+  conference,
   session,
-  conference
+  user,
+  vote,
+  facilitate,
 });
 
 export default root;

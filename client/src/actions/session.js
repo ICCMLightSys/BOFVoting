@@ -4,7 +4,7 @@ import * as actionTypes from '../constants/actionTypes';
 export function addSession(session) {
   return async (dispatch, getState) => {
     const state = getState();
-    const conferenceId = 1; // TODO get conferenceId
+    const conferenceId = state.conference.conferenceId;
     let response = await fetch(`${configuration.baseApiUrl}/conferences/${conferenceId}/sessions`, {
       method: 'POST',
       headers: {

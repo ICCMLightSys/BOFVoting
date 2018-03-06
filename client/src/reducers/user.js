@@ -1,10 +1,9 @@
-import * as actionTypes from '../constants/actionTypes';
+const defaultState = {
+  userId: 1, // TODO don't hardcode user ID
+};
 
-export default function user(state = { count: 0 }, action) {
+export default function user(state = defaultState, action) {
   switch(action.type) {
-    case actionTypes.SOMETHING_DONE_TO_USER: {
-      return { ...state, count: state.count + 1 };
-    }
     default: {
       return state;
     }
