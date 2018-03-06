@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Button, Checkbox, Form, Header, Radio, Table } from 'semantic-ui-react';
 import { getCount } from '../selectors/user';
 import * as voteTypes from '../constants/voteTypes';
+import { fetchSessions } from '../actions/session';
 
 class SessionsPage extends Component {
   constructor(props) {
@@ -17,7 +18,12 @@ class SessionsPage extends Component {
     }
   }
 
+  componentDidMount() {
+    this.props.dispatch(fetchSessions(1)); // TODO don't hardcode conference ID
+  }
+
   render() {
+    console.log(this.props.sessions);
     return (
       <div>
         <Table celled padded>
@@ -35,7 +41,7 @@ class SessionsPage extends Component {
                 <Table.Row>
                   <Table.Cell>
                     <Header as='h4'>
-                      {`${name} (${numVotes} votes, ${numFacilitators} facilitator${numFacilitators > 1 ? 's' : ''})`}
+                      {`${name} (${numVotes} votes, ${numFacilitators} facilitator${numFacilitators === 1 ? '' : 's'})`}
                     </Header>
                     {description}
                   </Table.Cell>
@@ -109,9 +115,6 @@ class SessionsPage extends Component {
 export default connect(
   state => ({
     count: getCount(state),
-    sessions: [
-      { name: 'Lorem Ipsum', numVotes: 17.5, numFacilitators: 2, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
-      { name: 'Lorem Ipsum v2.0', numVotes: 12, numFacilitators: 1, description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.' },
-    ]
+    sessions: state.session.sessions
   })
 )(SessionsPage);

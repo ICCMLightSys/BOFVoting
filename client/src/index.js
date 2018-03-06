@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { applyMiddleware, createStore, compose } from 'redux';
 import { Provider } from 'react-redux';
-import { createStore, compose } from 'redux';
+import thunk from 'redux-thunk';
 import rootReducer from './reducers/rootReducer';
 import registerServiceWorker from './registerServiceWorker';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
@@ -12,6 +13,7 @@ import App from './App';
 import VotingPage from './components/SessionsPage';
 
 const middleware = compose(
+  applyMiddleware(thunk),
   window.devToolsExtension ? window.devToolsExtension() : f => f
 );
 
