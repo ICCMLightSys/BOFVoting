@@ -12,4 +12,6 @@ router.post('/tokens', async (req, res) => {
   }
 });
 
+router.use(require('../middleware/errorHandling'));
+
 module.exports = router;

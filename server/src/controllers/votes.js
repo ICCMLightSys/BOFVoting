@@ -3,9 +3,9 @@ const router = express.Router();
 
 const HttpResponseError = require('../httpResponseError');
 
-router.use(require('../middleware/authentication'));
+const requireAuthentication = require('../middleware/authentication');
 
-router.post('/conferences/:conferenceId/sessions/:sessionId/votes', async (req, res) => {
+router.post('/conferences/:conferenceId/sessions/:sessionId/votes', requireAuthentication, async (req, res) => {
   if (!req.users.hasAccessTo(req.authentication.userId, req.params.conferenceId)) {
     throw new HttpResponseError('FORBIDDEN', 'User does not have access to that conference');
   }
@@ -17,7 +17,7 @@ router.post('/conferences/:conferenceId/sessions/:sessionId/votes', async (req, 
   res.status(201).send({ voteType: req.body.voteType });
 });
 
-router.get('/conferences/:conferenceId/votes', async (req, res) => {
+router.get('/conferences/:conferenceId/votes', requireAuthentication, async (req, res) => {
   if (!req.users.hasAccessTo(req.authentication.userId, req.params.conferenceId)) {
     throw new HttpResponseError('FORBIDDEN', 'User does not have access to that conference');
   }
@@ -26,5 +26,7 @@ router.get('/conferences/:conferenceId/votes', async (req, res) => {
 
   res.status(200).send(votes);
 });
+
+router.use(require('../middleware/errorHandling'));
 
 module.exports = router;

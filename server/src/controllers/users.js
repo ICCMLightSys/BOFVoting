@@ -54,4 +54,6 @@ router.put('/users/password', async (req, res) => {
   res.status(200).send({ result: 'success' });
 });
 
+router.use(require('../middleware/errorHandling'));
+
 module.exports = router;

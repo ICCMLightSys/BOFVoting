@@ -7,4 +7,6 @@ router.get('/sqldemo', async (req, res) => {
   res.send(result.solution.toString());
 });
 
+router.use(require('../middleware/errorHandling'));
+
 module.exports = router;
