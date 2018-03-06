@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Button, Checkbox, Form, Header, Radio, Table } from 'semantic-ui-react';
+import { Checkbox, Form, Header, Radio, Table } from 'semantic-ui-react';
 import { getCount } from '../selectors/user';
 import * as voteTypes from '../constants/voteTypes';
-import { fetchSessions } from '../actions/session';
+import { addSession, fetchSessions } from '../actions/session';
 
 class SessionsPage extends Component {
   constructor(props) {
@@ -15,7 +15,14 @@ class SessionsPage extends Component {
         'Lorem Ipsum v2.0': voteTypes.NO,
       },
       facilitate: []
-    }
+    };
+
+    this.handleAddSessionSubmit = this.handleAddSessionSubmit.bind(this);
+  }
+
+  handleAddSessionSubmit(e, data) {
+    const session = { name: this.nameField.value, description: this.descriptionField.value };
+    this.props.dispatch(addSession(session));
   }
 
   componentDidMount() {
@@ -23,7 +30,6 @@ class SessionsPage extends Component {
   }
 
   render() {
-    console.log(this.props.sessions);
     return (
       <div>
         <Table celled padded>
@@ -99,13 +105,13 @@ class SessionsPage extends Component {
         <Form>
           <Form.Field>
             <label>Name</label>
-            <input placeholder='Name' />
+            <input ref={nameField => this.nameField = nameField} placeholder='Name' />
           </Form.Field>
           <Form.Field>
             <label>Description</label>
-            <Form.TextArea placeholder='Description' />
+            <textarea ref={descriptionField => this.descriptionField = descriptionField} placeholder='Description' />
           </Form.Field>
-          <Button type='submit'>Submit</Button>
+          <Form.Button type='submit' onClick={this.handleAddSessionSubmit}>Submit</Form.Button>
         </Form>
       </div>
     );
