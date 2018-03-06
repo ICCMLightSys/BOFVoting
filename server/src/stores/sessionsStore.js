@@ -27,6 +27,13 @@ class SessionsStore extends Store {
     );
   }
 
+  async findAllFacilitatedBy(userId) {
+    return await this.database.query(
+      `SELECT Sessions.* FROM Sessions INNER JOIN Facilitators ON Sessions.id = Facilitators.sessionId WHERE Facilitators.userId = ?`,
+      [userId]
+    );
+  }
+
   async insert(conferenceId, session) {
     validateSession(session);
 
@@ -36,6 +43,20 @@ class SessionsStore extends Store {
     );
 
     return result.insertId;
+  }
+
+  async addFacilitator(sessionId, userId) {
+    await this.database.query(
+      'INSERT IGNORE INTO Facilitators (userId, sessionId) VALUES (?, ?)',
+      [userId, sessionId]
+    );
+  }
+
+  async removeFacilitator(sessionId, userId) {
+    await this.database.query(
+      'DELETE FROM Facilitators WHERE userId = ? AND sessionId = ?',
+      [userId, sessionId]
+    );
   }
 }
 
