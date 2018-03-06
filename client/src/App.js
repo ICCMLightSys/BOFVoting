@@ -7,7 +7,10 @@ class App extends Component {
     return (
       <div>
         <p>Conference ID: {this.props.conferenceId}</p>
+        <p>User ID: {this.props.userId}</p>
         <NavLink to="/sessions">Sessions</NavLink>
+        <br />
+        <NavLink to="/conferenceadmin">Conference Admin</NavLink>
       </div>
     );
   }
@@ -16,5 +19,6 @@ class App extends Component {
 export default connect(
   state => ({
     conferenceId: state.conference.conferenceId,
+    userId: state.user.userId,
   })
 )(App);

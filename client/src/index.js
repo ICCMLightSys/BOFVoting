@@ -10,7 +10,8 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 
 import App from './App';
-import VotingPage from './components/SessionsPage';
+import SessionsPage from './components/SessionsPage';
+import ConferenceAdminPage from './components/ConferenceAdminPage';
 import { setJwtToken } from './actions/request';
 
 const middleware = compose(
@@ -30,7 +31,8 @@ ReactDOM.render(
     <Router>
       <div className="container">
         <Route exact path="/" component={App} />
-        <Route path="/sessions" component={VotingPage} />
+        <Route path="/sessions" component={SessionsPage} />
+        <Route path="/conferenceadmin" component={ConferenceAdminPage} />
       </div>
     </Router>
   </Provider>,

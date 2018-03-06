@@ -5,14 +5,11 @@ import * as voteTypes from '../constants/voteTypes';
 import { addSession, fetchSessions } from '../actions/session';
 import { fetchVotes, setVote } from '../actions/vote';
 import { fetchFacilitates, setFacilitate } from '../actions/facilitate';
+import AddSession from './AddSession';
 
 class SessionsPage extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      facilitate: [],
-    };
 
     this.handleAddSessionSubmit = this.handleAddSessionSubmit.bind(this);
   }
@@ -97,18 +94,7 @@ class SessionsPage extends Component {
             }
           </Table.Body>
         </Table>
-        <h4>Add Session</h4>
-        <Form>
-          <Form.Field>
-            <label>Name</label>
-            <input ref={nameField => this.nameField = nameField} placeholder="Name" />
-          </Form.Field>
-          <Form.Field>
-            <label>Description</label>
-            <textarea ref={descriptionField => this.descriptionField = descriptionField} placeholder="Description" />
-          </Form.Field>
-          <Form.Button type="submit" onClick={this.handleAddSessionSubmit}>Submit</Form.Button>
-        </Form>
+        <AddSession />
       </div>
     );
   }
