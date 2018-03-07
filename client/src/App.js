@@ -11,6 +11,8 @@ class App extends Component {
         <NavLink to="/sessions">Sessions</NavLink>
         <br />
         <NavLink to="/conferenceadmin">Conference Admin</NavLink>
+        <br />
+        <NavLink to="/siteadmin">Site Admin</NavLink>
       </div>
     );
   }

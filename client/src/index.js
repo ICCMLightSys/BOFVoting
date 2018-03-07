@@ -12,6 +12,7 @@ import 'semantic-ui-css/semantic.min.css';
 import App from './App';
 import SessionsPage from './components/SessionsPage';
 import ConferenceAdminPage from './components/ConferenceAdminPage';
+import SiteAdminPage from './components/SiteAdminPage'
 import { setJwtToken } from './actions/request';
 
 const middleware = compose(
@@ -33,6 +34,7 @@ ReactDOM.render(
         <Route exact path="/" component={App} />
         <Route path="/sessions" component={SessionsPage} />
         <Route path="/conferenceadmin" component={ConferenceAdminPage} />
+        <Route path="/siteadmin" component={SiteAdminPage} />
       </div>
     </Router>
   </Provider>,

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Icon, Table } from 'semantic-ui-react';
-import { addSession, fetchSessions } from '../actions/session';
+import { fetchSessions } from '../actions/session';
 import { fetchVotes } from '../actions/vote';
-import { fetchFacilitates } from '../actions/facilitate';
 import AddSession from './AddSession';
 
 class SessionsPage extends Component {
@@ -73,7 +72,7 @@ class SessionsPage extends Component {
           </Table.Body>
         </Table>
         <AddSession />
-        <h4>Change Nomination and Voting Times</h4>
+        <h2>Change Nomination and Voting Times</h2>
         <Form>
           <Form.Field>
             <label>Nomination Start Time</label>

@@ -18,7 +18,7 @@ class AddSession extends Component {
   render() {
     return (
       <div>
-        <h4>Add Session</h4>
+        <h2>Add Session</h2>
         <Form>
           <Form.Field>
             <label>Name</label>
