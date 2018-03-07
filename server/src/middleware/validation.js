@@ -1,8 +1,11 @@
 const HttpResponseError = require('../httpResponseError');
 
 function ensureUserHasAccessToConference(req, res, next) {
-  req.users.hasAccessTo(req.authentication.userId, req.params.conferenceId).then((hasAccess) => {
-    if (hasAccess === true) {
+  Promise.all([
+    req.users.isAdmin(req.authentication.userId, req.params.conferenceId),
+    req.users.hasAccessTo(req.authentication.userId, req.params.conferenceId),
+  ]).then((isAdmin, hasAccess) => {
+    if (isAdmin || hasAccess) {
       next();
     } else {
       next(new HttpResponseError('FORBIDDEN', 'User does not have access to that conference'));
@@ -13,7 +16,6 @@ function ensureUserHasAccessToConference(req, res, next) {
 function requireUserToBeAdmin(req, res, next) {
   const { userId } = req.authentication;
   const { conferenceId } = req.params;
-
 
   req.users.isAdmin(userId, conferenceId).then((isAdmin) => {
     if (isAdmin === true) {
