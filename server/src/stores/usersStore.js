@@ -84,9 +84,9 @@ class UsersStore extends Store {
   }
 
   async exists(username) {
-    const result = await this.database.query('SELECT COUNT(*) AS userCount FROM Users WHERE username = ?', [username]);
+    const result = await this.database.queryOne('SELECT COUNT(*) AS userCount FROM Users WHERE username = ?', [username]);
 
-    return result[0].userCount >= 1;
+    return result.userCount >= 1;
   }
 
   async isAdmin(userId, conferenceId) {

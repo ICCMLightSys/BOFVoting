@@ -1,6 +1,5 @@
-let Store = require('./store.js');
-
-let { ValidationError } = require('./errors');
+const Store = require('./store.js');
+const { ValidationError } = require('./errors');
 
 function validateSession(sessionData) {
   if (sessionData == null || typeof sessionData !== 'object') {
@@ -13,6 +12,15 @@ function validateSession(sessionData) {
 }
 
 class SessionsStore extends Store {
+  async exists(sessionId) {
+    const result = await this.database.queryOne(
+      'SELECT COUNT(*) AS rowCount FROM Sessions WHERE id = ?',
+      [sessionId]
+    );
+
+    return result.rowCount >= 1;
+  }
+
   async find(sessionId) {
     return await this.database.query(
       'SELECT id, name, description FROM Sessions WHERE id = ?',

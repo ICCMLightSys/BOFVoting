@@ -7,6 +7,8 @@ let path = require('path');
 
 let configuration = require('./configuration.js');
 
+const { validateExistenceOfParameterResources } = require('./src/middleware/validation');
+
 let app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -21,13 +23,18 @@ app.use(require('./src/middleware/stores.js'));
 
 const HTTP_METHODS = require('http').METHODS.map(method => method.toLowerCase());
 
-// Here be dragons.  We're monkey patching express.js to make it correctly handle errors thrown from async functions.
+// Here be dragons.  We're monkey patching express.js to insert validators for each route and to
+//   make it correctly handle errors thrown from async functions.
 (function () {
   const patch = (expressObject) => {
     for (const functionToPatch of HTTP_METHODS) {
       let originalFunction = expressObject[functionToPatch];
 
       expressObject[functionToPatch] = function (...args) {
+        if (args.length > 1 || typeof args[0] === 'function') {
+          args.splice(args.length > 1 ? args.length - 1 : 0, 0, validateExistenceOfParameterResources);
+        }
+
         for (let i = 0; i < args.length; i++) {
           if (typeof args[i] === 'function') {
             let originalHandler = args[i];

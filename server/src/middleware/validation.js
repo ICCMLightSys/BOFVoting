@@ -49,4 +49,38 @@ function requireUserToBeSiteAdmin(req, res, next) {
   }).catch(next);
 }
 
-module.exports = { requireUserToBeAdmin, requireUserToBeConferenceAdmin, requireUserToBeSiteAdmin, ensureUserHasAccessToConference };
+async function validateExistenceOfParameterResources(req, res, next) {
+  console.log('validating');
+
+  if (req.params.conferenceId != null) {
+    if (!await req.conferences.exists(req.params.conferenceId)) {
+      next(new HttpResponseError('NOT_FOUND', 'Conference not found'));
+      return;
+    }
+  }
+
+  if (req.params.sessionId != null) {
+    console.log('checking sessions');
+    if (!await req.sessions.exists(req.params.sessionId)) {
+      next(new HttpResponseError('NOT_FOUND', 'Session not found'));
+      return;
+    }
+  }
+
+  if (req.params.userId != null) {
+    if (!await req.users.exists(req.params.userId)) {
+      next(new HttpResponseError('NOT_FOUND', 'User not found'));
+      return;
+    }
+  }
+
+  next();
+}
+
+module.exports = {
+  requireUserToBeAdmin,
+  requireUserToBeConferenceAdmin,
+  requireUserToBeSiteAdmin,
+  ensureUserHasAccessToConference,
+  validateExistenceOfParameterResources,
+};

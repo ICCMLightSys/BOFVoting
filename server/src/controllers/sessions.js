@@ -18,7 +18,6 @@ router.post('/conferences/:conferenceId/sessions', requireAuthentication, ensure
   res.status(201).send(newSession);
 });
 
-// TODO: handle 404 errors
 router.patch('/conferences/:conferenceId/sessions/:sessionId', requireAuthentication, ensureUserHasAccessToConference, requireUserToBeAdmin, async (req, res) => {
   await req.sessions.update(req.params.sessionId, req.body);
 
