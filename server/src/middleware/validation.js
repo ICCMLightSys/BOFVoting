@@ -50,8 +50,6 @@ function requireUserToBeSiteAdmin(req, res, next) {
 }
 
 async function validateExistenceOfParameterResources(req, res, next) {
-  console.log('validating');
-
   if (req.params.conferenceId != null) {
     if (!await req.conferences.exists(req.params.conferenceId)) {
       next(new HttpResponseError('NOT_FOUND', 'Conference not found'));
