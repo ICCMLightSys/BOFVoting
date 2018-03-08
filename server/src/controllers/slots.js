@@ -12,7 +12,7 @@ router.post('/conferences/:conferenceId/generateSchedule', requireAuthentication
 
   await new Promise((resolve) => {
     generateSchedule(conference, sessions, (pop, gen, stats) => {
-      resolve(pop, gen, stats);
+      resolve({ pop, gen, stats });
     });
   });
 
