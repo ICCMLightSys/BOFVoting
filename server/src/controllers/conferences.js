@@ -1,5 +1,5 @@
 const express = require('express');
-const { requireUserToBeConferenceAdmin, requireUserToBeSiteAdmin, ensureUserHasAccessToConference } = require('../middleware/validation');
+const { requireUserToBeAdmin, requireUserToBeSiteAdmin, ensureUserHasAccessToConference } = require('../middleware/validation');
 const requireAuthentication = require('../middleware/authentication');
 
 const router = express.Router();
@@ -23,7 +23,7 @@ router.post('/conferences', requireAuthentication, requireUserToBeSiteAdmin, asy
   res.status(201).send(newConference);
 });
 
-router.patch('/conferences/:conferenceId', requireAuthentication, requireUserToBeConferenceAdmin, async (req, res) => {
+router.patch('/conferences/:conferenceId', requireAuthentication, requireUserToBeAdmin, async (req, res) => {
   await req.conferences.update(req.params.conferenceId, req.body);
 
   const conference = await req.conferences.find(req.params.conferenceId);
