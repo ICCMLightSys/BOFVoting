@@ -13,6 +13,8 @@ class AddSession extends Component {
   handleAddSessionSubmit(e, data) {
     const session = { name: this.nameField.value, description: this.descriptionField.value };
     this.props.dispatch(addSession(session));
+    this.nameField.value = '';
+    this.descriptionField.value = '';
   }
 
   render() {
