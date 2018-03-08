@@ -40,69 +40,68 @@ class SessionsPage extends Component {
           <Table.Body>
             {
               this.props.sessions.sort((a, b) => {
-                  // sort by vote count then alphabetical
-                  // only update vote counts when user refreshes page
-                  const difference = b.votes - a.votes;
-                  if(difference === 0) {
-                    return a.name > b.name ? 1 : -1;
-                  } else {
-                    return Math.sign(difference);
-                  }
-                }).map(({ id, name, votes, facilitators, description }) => (
-                  <Table.Row key={id}>
-                    <Table.Cell>
-                      <Header as="h4">
-                        {
-                          `${name} (${votes} vote${votes === 1 ? '' : 's'}, ` +
-                          `${facilitators} facilitator${facilitators === 1 ? '' : 's'})`
-                        }
-                      </Header>
-                      {description}
-                    </Table.Cell>
-                    <Table.Cell singleLine>
-                      <Form>
-                        <Form.Field>
-                          <Radio
-                            label="Yes"
-                            name="votingGroup"
-                            value="yes"
-                            checked={this.props.votes[id] === voteTypes.YES}
-                            onChange={() => this.props.dispatch(setVote(id, voteTypes.YES))}
-                            disabled={this.props.facilitate.includes(id)}
-                          />
-                        </Form.Field>
-                        <Form.Field>
-                          <Radio
-                            label="Alt"
-                            name="votingGroup"
-                            value="alt"
-                            checked={this.props.votes[id] === voteTypes.ALT}
-                            onChange={() => this.props.dispatch(setVote(id, voteTypes.ALT))}
-                            disabled={this.props.facilitate.includes(id)}
-                          />
-                        </Form.Field>
-                        <Form.Field>
-                          <Radio
-                            label="No"
-                            name="votingGroup"
-                            value="no"
-                            checked={this.props.votes[id] === voteTypes.NO || this.props.votes[id] === undefined}
-                            onChange={() => this.props.dispatch(setVote(id, voteTypes.NO))}
-                            disabled={this.props.facilitate.includes(id)}
-                          />
-                        </Form.Field>
-                      </Form>
-                    </Table.Cell>
-                    <Table.Cell textAlign="center">
-                      <Checkbox checked={this.props.facilitate.includes(id)} onChange={(e, data) => {
-                        this.props.dispatch(setFacilitate(id, data.checked));
-                        if(data.checked) {
-                          this.props.dispatch(setVote(id, voteTypes.YES));
-                        }
-                      }} />
-                    </Table.Cell>
-                  </Table.Row>
-                )
+                // sort by vote count then alphabetical
+                // only update vote counts when user refreshes page
+                const difference = b.votes - a.votes;
+                if(difference === 0) {
+                  return a.name > b.name ? 1 : -1;
+                } else {
+                  return Math.sign(difference);
+                }
+              }).map(({ id, name, votes, facilitators, description }) =>
+                <Table.Row key={id}>
+                  <Table.Cell>
+                    <Header as="h4">
+                      {
+                        `${name} (${votes} vote${votes === 1 ? '' : 's'}, ` +
+                        `${facilitators} facilitator${facilitators === 1 ? '' : 's'})`
+                      }
+                    </Header>
+                    {description}
+                  </Table.Cell>
+                  <Table.Cell singleLine>
+                    <Form>
+                      <Form.Field>
+                        <Radio
+                          label="Yes"
+                          name="votingGroup"
+                          value="yes"
+                          checked={this.props.votes[id] === voteTypes.YES}
+                          onChange={() => this.props.dispatch(setVote(id, voteTypes.YES))}
+                          disabled={this.props.facilitate.includes(id)}
+                        />
+                      </Form.Field>
+                      <Form.Field>
+                        <Radio
+                          label="Alt"
+                          name="votingGroup"
+                          value="alt"
+                          checked={this.props.votes[id] === voteTypes.ALT}
+                          onChange={() => this.props.dispatch(setVote(id, voteTypes.ALT))}
+                          disabled={this.props.facilitate.includes(id)}
+                        />
+                      </Form.Field>
+                      <Form.Field>
+                        <Radio
+                          label="No"
+                          name="votingGroup"
+                          value="no"
+                          checked={this.props.votes[id] === voteTypes.NO || this.props.votes[id] === undefined}
+                          onChange={() => this.props.dispatch(setVote(id, voteTypes.NO))}
+                          disabled={this.props.facilitate.includes(id)}
+                        />
+                      </Form.Field>
+                    </Form>
+                  </Table.Cell>
+                  <Table.Cell textAlign="center">
+                    <Checkbox checked={this.props.facilitate.includes(id)} onChange={(e, data) => {
+                      this.props.dispatch(setFacilitate(id, data.checked));
+                      if(data.checked) {
+                        this.props.dispatch(setVote(id, voteTypes.YES));
+                      }
+                    }} />
+                  </Table.Cell>
+                </Table.Row>
               )
             }
           </Table.Body>

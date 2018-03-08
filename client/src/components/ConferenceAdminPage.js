@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Icon, Table } from 'semantic-ui-react';
-import { fetchSessions } from '../actions/session';
+import { fetchSessions, updateSession } from '../actions/session';
 import { fetchVotes } from '../actions/vote';
 import AddSession from './AddSession';
 
-class SessionsPage extends Component {
+class ConferenceAdminPage extends Component {
   constructor(props) {
     super(props);
+
+
+    this.nameFields = [];
+    this.descriptionFields = [];
+
+    this.state = {
+      editedSessions: [],
+    };
 
     this.handleChangeTimesSubmit = this.handleChangeTimesSubmit.bind(this);
   }
@@ -37,24 +45,59 @@ class SessionsPage extends Component {
 
           <Table.Body>
             {
-              this.props.sessions.map(({ id, name, votes, facilitators, description }) =>
+              this.props.sessions.sort((a, b) => {
+                // sort by vote count then alphabetical
+                // only update vote counts when user refreshes page
+                const difference = b.votes - a.votes;
+                if(difference === 0) {
+                  return a.name > b.name ? 1 : -1;
+                } else {
+                  return Math.sign(difference);
+                }
+              }).map(({ id, name, votes, facilitators, description }) =>
                 <Table.Row key={id}>
                   <Table.Cell>
                     <Form>
                       <Form.Field>
-                        <input placeholder='Session name' defaultValue={name} />
+                        <input
+                          placeholder='Session name'
+                          defaultValue={name}
+                          ref={nameField => this.nameFields[id] = nameField}
+                          onChange={() => {
+                            if(!this.state.editedSessions.includes(id)) {
+                              this.setState({ editedSessions: this.state.editedSessions.concat([id]) });
+                            }
+                          }} />
                       </Form.Field>
                       <p>
                         {`(${votes} votes, ${facilitators} facilitator${facilitators === 1 ? '' : 's'})`}
                       </p>
                       <Form.Field>
-                        <Form.TextArea placeholder='Session description' defaultValue={description} />
+                        <textarea
+                          placeholder='Session description'
+                          defaultValue={description}
+                          ref={descriptionField => this.descriptionFields[id] = descriptionField}
+                          onChange={() => {
+                            if(!this.state.editedSessions.includes(id)) {
+                              this.setState({ editedSessions: this.state.editedSessions.concat([id]) });
+                            }
+                          }} />
                       </Form.Field>
                     </Form>
                   </Table.Cell>
                   <Table.Cell textAlign="center">
                     <Form>
-                      <Form.Button color="green" icon>
+                      <Form.Button disabled={!this.state.editedSessions.includes(id)} color="green" icon
+                        onClick={() => {
+                          const editedSessions = [...this.state.editedSessions];
+                          editedSessions.splice(editedSessions.indexOf(id), 1);
+                          this.setState({ editedSessions });
+                          this.props.dispatch(updateSession({
+                            id,
+                            name: this.nameFields[id].value,
+                            description: this.descriptionFields[id].value,
+                          }));
+                        }}>
                         <Icon name='save' />&nbsp;&nbsp;Save
                       </Form.Button>
                     </Form>
@@ -112,4 +155,4 @@ export default connect(
     votes: state.vote.votes,
     facilitate: state.facilitate.facilitate,
   })
-)(SessionsPage);
+)(ConferenceAdminPage);
