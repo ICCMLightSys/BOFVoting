@@ -25,6 +25,12 @@ router.patch('/conferences/:conferenceId/sessions/:sessionId', requireAuthentica
   res.status(200).send(editedSession);
 });
 
+router.delete('/conferences/:conferenceId/sessions/:sessionId', requireAuthentication, ensureUserHasAccessToConference, requireUserToBeAdmin, async (req, res) => {
+  await req.sessions.delete(req.params.sessionId);
+
+  res.status(204).send({ });
+});
+
 router.get('/conferences/:conferenceId/facilitate', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   const sessions = await req.sessions.findAllFacilitatedBy(req.authentication.userId);
 

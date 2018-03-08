@@ -116,6 +116,10 @@ class SessionsStore extends Store {
     );
   }
 
+  async delete(sessionId) {
+    await this.database.query('DELETE FROM Sessions WHERE id = ?', [sessionId]);
+  }
+
   async addFacilitator(sessionId, userId) {
     await this.database.query(
       'INSERT IGNORE INTO Facilitators (userId, sessionId) VALUES (?, ?)',
