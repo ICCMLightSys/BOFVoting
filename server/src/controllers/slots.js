@@ -10,3 +10,6 @@ router.post('/generateSchedule', requireAuthentication, requireUserToBeAdmin, as
   res.status(204).send();
 });
 
+router.use(require('../middleware/errorHandling'));
+
+module.exports = router;
