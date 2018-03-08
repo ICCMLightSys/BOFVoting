@@ -1,9 +1,6 @@
-const Genetic = require("genetic-js");
+const Genetic = require('genetic-js');
 
 const genetic = Genetic.create();
-
-const numTimeSlots = 5;
-const numRooms = 4;
 
 genetic.seed = () => {
   const shuffle = (array) => {
@@ -21,7 +18,10 @@ genetic.seed = () => {
     return array;
   };
 
-  return shuffle([...Array(this.numTimeSlots * this.numRooms).keys()]);
+  const numTimeSlots = 5;
+  const numRooms = 4;
+
+  return shuffle([...Array(numTimeSlots * numRooms).keys()]);
 };
 
 genetic.fitness = (array) => {
@@ -104,14 +104,14 @@ genetic.fitness = (array) => {
 
   let score = 0;
 
-  for(let i = 0; i < multiArray.length; i++) {
+  for (let i = 0; i < multiArray.length; i++) {
     const set = new Set();
     const alternateSet = new Set();
     const facilitatorSet = new Set();
     let count = 0;
     let alternateCount = 0;
     let facilitatorCount = 0;
-    for(let j = 0; j < multiArray[i].length; j++) {
+    for (let j = 0; j < multiArray[i].length; j++) {
       const sessionIndex = multiArray[i][j];
       const users = sessionUsers[sessionIndex];
       count += users.length;
