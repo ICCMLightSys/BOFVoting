@@ -26,19 +26,6 @@ function requireUserToBeAdmin(req, res, next) {
   }).catch(next);
 }
 
-function requireUserToBeConferenceAdmin(req, res, next) {
-  const { userId } = req.authentication;
-  const { conferenceId } = req.params;
-
-  req.users.isConferenceAdmin(userId, conferenceId).then((isAdmin) => {
-    if (isAdmin === true) {
-      next();
-    } else {
-      next(new HttpResponseError('FORBIDDEN', `User ${userId} is not an administrator of conference ${conferenceId}`));
-    }
-  }).catch(next);
-}
-
 function requireUserToBeSiteAdmin(req, res, next) {
   const { userId } = req.authentication;
 
@@ -79,7 +66,6 @@ async function validateExistenceOfParameterResources(req, res, next) {
 
 module.exports = {
   requireUserToBeAdmin,
-  requireUserToBeConferenceAdmin,
   requireUserToBeSiteAdmin,
   ensureUserHasAccessToConference,
   validateExistenceOfParameterResources,
