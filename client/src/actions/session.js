@@ -69,3 +69,26 @@ export const receiveUpdatedSession = (session) => {
 export const failUpdateSession = (error) => {
   return { type: actionTypes.FAIL_UPDATE_SESSION, payload: { error } };
 };
+
+export function deleteSession(id) {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const conferenceId = state.conference.conferenceId;
+    const method = 'DELETE';
+    const route = `/conferences/${conferenceId}/sessions/${id}`;
+    try {
+      await request(method, route);
+      dispatch(receiveDeletedSession(id));
+    } catch (error) {
+      dispatch(failDeleteSession(error));
+    }
+  }
+}
+
+export const receiveDeletedSession = (id) => {
+  return { type: actionTypes.RECEIVE_DELETED_SESSION, payload: { id } };
+};
+
+export const failDeleteSession = (error) => {
+  return { type: actionTypes.FAIL_DELETE_SESSION, payload: { error } };
+};

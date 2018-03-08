@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Form, Icon, Table } from 'semantic-ui-react';
-import { fetchSessions, updateSession } from '../actions/session';
+import { fetchSessions, updateSession, deleteSession } from '../actions/session';
 import { fetchVotes } from '../actions/vote';
 import AddSession from './AddSession';
 
@@ -97,7 +97,7 @@ class ConferenceAdminPage extends Component {
                   </Table.Cell>
                   <Table.Cell textAlign="center">
                     <Form>
-                      <Form.Button color="red" icon>
+                      <Form.Button color="red" icon onClick={() => this.props.dispatch(deleteSession(id))}>
                         <Icon name='trash' />&nbsp;&nbsp;Delete
                       </Form.Button>
                     </Form>

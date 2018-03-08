@@ -15,6 +15,8 @@ import ConferenceAdminPage from './components/ConferenceAdminPage';
 import SiteAdminPage from './components/SiteAdminPage'
 import { setJwtToken } from './actions/request';
 
+import './polyfill';
+
 const middleware = compose(
   applyMiddleware(thunk),
   window.devToolsExtension ? window.devToolsExtension() : f => f

@@ -34,7 +34,11 @@ export const request = (method, route, data = null) => {
           return;
         }
 
-        resolve(response.json());
+        if (response.status !== 204) {
+          resolve(response.json());
+        } else {
+          resolve();
+        }
       });
   });
 };
