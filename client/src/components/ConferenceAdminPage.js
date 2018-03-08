@@ -46,14 +46,7 @@ class ConferenceAdminPage extends Component {
           <Table.Body>
             {
               this.props.sessions.sort((a, b) => {
-                // sort by vote count then alphabetical
-                // only update vote counts when user refreshes page
-                const difference = b.votes - a.votes;
-                if(difference === 0) {
-                  return a.name > b.name ? 1 : -1;
-                } else {
-                  return Math.sign(difference);
-                }
+                return a.id > b.id ? 1 : -1;
               }).map(({ id, name, votes, facilitators, description }) =>
                 <Table.Row key={id}>
                   <Table.Cell>

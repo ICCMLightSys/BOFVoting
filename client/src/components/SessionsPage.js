@@ -11,12 +11,43 @@ class SessionsPage extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      sortOrder: [],
+    };
+
     this.handleAddSessionSubmit = this.handleAddSessionSubmit.bind(this);
   }
 
   handleAddSessionSubmit(e, data) {
     const session = { name: this.nameField.value, description: this.descriptionField.value };
     this.props.dispatch(addSession(session));
+  }
+
+  componentWillUpdate(nextProps) {
+    if(nextProps.sessions.length !== this.props.sessions.length) {
+      let sortOrder = this.state.sortOrder;
+      if(this.props.sessions.length === 0) { // sessions were loaded from server
+        sortOrder = nextProps.sessions.sort((a, b) => {
+          // sort by vote count then alphabetical
+          // only update vote counts when user refreshes page
+          const difference = b.votes - a.votes;
+          if(difference === 0) {
+            return a.name > b.name ? 1 : -1;
+          } else {
+            return Math.sign(difference);
+          }
+        }).map(session => session.id);
+      } else if(nextProps.sessions.length > this.props.sessions.length) { // session was added
+        nextProps.sessions.forEach(session => {
+          if(this.props.sessions.find(s => session.id === s.id) === undefined) {
+            sortOrder.push(session.id);
+          }
+        });
+      } else { // session was deleted
+        // nothing to do
+      }
+      this.setState({ sortOrder });
+    }
   }
 
   componentDidMount() {
@@ -40,14 +71,7 @@ class SessionsPage extends Component {
           <Table.Body>
             {
               this.props.sessions.sort((a, b) => {
-                // sort by vote count then alphabetical
-                // only update vote counts when user refreshes page
-                const difference = b.votes - a.votes;
-                if(difference === 0) {
-                  return a.name > b.name ? 1 : -1;
-                } else {
-                  return Math.sign(difference);
-                }
+                return this.state.sortOrder.indexOf(a.id) - this.state.sortOrder.indexOf(b.id);
               }).map(({ id, name, votes, facilitators, description }) =>
                 <Table.Row key={id}>
                   <Table.Cell>
