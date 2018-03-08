@@ -6,7 +6,7 @@ const requireAuthentication = require('../middleware/authentication');
 const router = express.Router();
 
 router.get('/conferences/:conferenceId/sessions', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
-  let sessions = await req.sessions.findAll(req.params.conferenceId, true);
+  let sessions = await req.sessions.findAll(req.params.conferenceId);
 
   res.status(200).send(sessions);
 });

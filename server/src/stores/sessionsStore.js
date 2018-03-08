@@ -21,14 +21,20 @@ class SessionsStore extends Store {
     return result.rowCount >= 1;
   }
 
-  async find(sessionId) {
-    return await this.database.query(
+  async find(sessionId, includeVotesAndFacilitators = true) {
+    const session = await this.database.queryOne(
       'SELECT id, name, description FROM Sessions WHERE id = ?',
       [sessionId]
     );
+
+    if (includeVotesAndFacilitators) {
+      await this.addVotesAndFacilitators(session);
+    }
+
+    return session;
   }
 
-  async findAll(conferenceId, includeVotesAndFacilitators = false) {
+  async findAll(conferenceId, includeVotesAndFacilitators = true) {
     // TODO: investigate performance problems and revert back to this version
     // const sessions = await this.database.query(
     //   'SELECT id, name, description FROM Sessions WHERE conferenceId = 1',
