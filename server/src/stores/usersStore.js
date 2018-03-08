@@ -72,8 +72,13 @@ class UsersStore extends Store {
     return results[0];
   }
 
-  async findAll() {
-    return this.database.query('SELECT * FROM Users');
+  async findAllWithAccessTo(conferenceId) {
+    return this.database.query(`
+      SELECT Users.*
+      FROM Users
+        INNER JOIN Permissions ON Users.id = Permissions.userId
+      WHERE Permissions.conferenceId = ?
+    `, [conferenceId]);
   }
 
   async update(userId, userData) {

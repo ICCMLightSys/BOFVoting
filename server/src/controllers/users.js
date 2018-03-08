@@ -1,12 +1,12 @@
 const express = require('express');
 const HttpResponseError = require('../httpResponseError.js');
 const requireAuthentication = require('../middleware/authentication');
-const { requireUserToBeSiteAdmin } = require('../middleware/validation');
+const { requireUserToBeAdmin } = require('../middleware/validation');
 
 const router = express.Router();
 
-router.get('/users', requireAuthentication, requireUserToBeSiteAdmin, async (req, res) => {
-  const users = await req.users.findAll();
+router.get('/conferences/:conferenceId/users', requireAuthentication, requireUserToBeAdmin, async (req, res) => {
+  const users = await req.users.findAllWithAccessTo(req.params.conferenceId);
   users.forEach((user) => { delete user.password; });
 
   res.status(200).send(users);
