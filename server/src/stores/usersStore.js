@@ -72,6 +72,10 @@ class UsersStore extends Store {
     return results[0];
   }
 
+  async findAll() {
+    return this.database.query('SELECT * FROM Users');
+  }
+
   async update(userId, userData) {
     validateUser(userData, false);
 
