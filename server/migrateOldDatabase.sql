@@ -51,3 +51,21 @@ WHERE location_id IS NOT NULL
 AND round_id IS NOT NULL;
 UPDATE Conferences set invitationCode='iccma'
 WHERE id=1;
+UPDATE Conferences 
+SET submissionStart = (SELECT nomination_begins
+						FROM config
+                        WHERE id=1),
+	submissionEnd = (SELECT nomination_ends
+						FROM config
+                        WHERE id=1),
+	votingStart = (SELECT voting_begins
+						FROM config
+                        WHERE id=1),
+	votingEnd = (SELECT voting_ends
+						FROM config
+                        WHERE id=1)
+WHERE id=1;
+INSERT INTO Facilitators (userId, sessionId)
+SELECT participant_id, workshop_id
+FROM workshop_participant
+WHERE leader=1;
