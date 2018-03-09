@@ -14,6 +14,7 @@ import Navbar from './components/Navbar';
 import SessionsPage from './components/SessionsPage';
 import ConferenceAdminPage from './components/ConferenceAdminPage';
 import SiteAdminPage from './components/SiteAdminPage';
+import SchedulePage from './components/SchedulePage';
 import api from './middleware/api';
 
 import './polyfill';
@@ -43,6 +44,7 @@ ReactDOM.render(
             <Route path="/sessions" component={SessionsPage} />
             <Route path="/conferenceadmin" component={ConferenceAdminPage} />
             <Route path="/siteadmin" component={SiteAdminPage} />
+            <Route path="/schedule" component={SchedulePage} />
           </div>
         </div>
       </Router>

@@ -50,7 +50,7 @@ class SessionsStore extends Store {
 
     if (includeVotesAndFacilitators) {
       return this.database.query(`
-        SELECT Sessions.id, Sessions.name, Sessions.description, Sessions.forced, IFNULL(counter.facilitatorCount, 0) as facilitators, IFNULL(voteCounter.votes, 0) as votes
+        SELECT Sessions.id, Sessions.name, Sessions.description, Sessions.forced, Sessions.conferenceId, IFNULL(counter.facilitatorCount, 0) as facilitators, IFNULL(voteCounter.votes, 0) as votes
           FROM Sessions
           LEFT JOIN (
             SELECT sessionId, COUNT(*) AS facilitatorCount FROM Facilitators GROUP BY sessionId

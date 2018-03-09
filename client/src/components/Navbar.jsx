@@ -20,6 +20,9 @@ class Navbar extends Component {
         <Menu.Item>
           <NavLink to="/siteadmin">Site Admin</NavLink>
         </Menu.Item>
+        <Menu.Item>
+          <NavLink to="/schedule">Schedule</NavLink>
+        </Menu.Item>
         <Menu.Item position="right">
           <Button onClick={() => this.props.dispatch(logout())}>Log out</Button>
         </Menu.Item>
