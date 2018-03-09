@@ -1,6 +1,9 @@
 // users
 export const RECEIVE_USERS = 'RECEIVE_USERS';
 export const FAIL_FETCH_USERS = 'FAIL_FETCH_USERS';
+export const LOGIN = 'LOGIN';
+export const START_LOGIN = 'START_LOGIN';
+export const FAIL_LOGIN = 'FAIL_LOGIN';
 
 // conference
 export const RECEIVE_CONFERENCES = 'RECEIVE_CONFERENCES';
