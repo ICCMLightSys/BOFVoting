@@ -1,5 +1,4 @@
 const express = require('express');
-const { HttpResponseError } = require('../httpResponseError');
 const { ensureUserHasAccessToConference, requireUserToBeAdmin } = require('../middleware/validation');
 const requireAuthentication = require('../middleware/authentication');
 
@@ -29,32 +28,6 @@ router.delete('/conferences/:conferenceId/sessions/:sessionId', requireAuthentic
   await req.sessions.delete(req.params.sessionId);
 
   res.status(204).send({ });
-});
-
-router.get('/conferences/:conferenceId/sessions/facilitators', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
-  const sessions = await req.sessions.findAllFacilitatedBy(req.authentication.userId);
-
-  res.status(200).send(sessions.map(session => session.id));
-});
-
-router.get('/conferences/:conferenceId/facilitators', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
-  const sessions = await req.sessions.findAllFacilitatedBy(req.authentication.userId);
-
-  res.status(200).send(sessions.map(session => session.id));
-});
-
-router.post('/conferences/:conferenceId/sessions/:sessionId/facilitate', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
-  if (typeof req.body !== 'object' || req.body.facilitate == null) {
-    throw new HttpResponseError('BAD_REQUEST', 'Request body must include the facilitate property');
-  }
-
-  if (req.body.facilitate) {
-    await req.sessions.addFacilitator(req.params.sessionId, req.authentication.userId);
-  } else {
-    await req.sessions.removeFacilitator(req.params.sessionId, req.authentication.userId);
-  }
-
-  res.status(201).send({ facilitate: req.body.facilitate });
 });
 
 router.use(require('../middleware/errorHandling'));
