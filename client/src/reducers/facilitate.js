@@ -18,15 +18,11 @@ export default function vote(state = { facilitate: {}, facilitators: [], facilit
       const { sessionId } = action.payload;
       return { ...state, facilitateStatus: { ...state.facilitateStatus, [sessionId]: { writing: false, error: action.error } } };
     }
-    case actionTypes.RECEIVE_FACILITATE: {
-      const { sessionId, facilitate } = action.payload;
-      return { ...state, facilitate: { ...state.facilitate, [sessionId]: facilitate }};
-    }
     case actionTypes.RECEIVE_FACILITATES: {
-      const newFacilitate = state.facilitate.splice();
+      const newFacilitate = { ...state.facilitate };
       Object.keys(newFacilitate).forEach(key => newFacilitate[key] = false);
       action.payload.facilitates.forEach(sessionId => newFacilitate[sessionId] = true);
-      return { ...state, facilitate: action.payload.facilitates };
+      return { ...state, facilitate: newFacilitate };
     }
     case actionTypes.RECEIVE_FACILITATORS: {
       return { ...state, facilitators: action.payload.facilitators };
