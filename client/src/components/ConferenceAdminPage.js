@@ -40,11 +40,13 @@ class ConferenceAdminPage extends Component {
 
   componentDidUpdate() {
     this.props.sessions.forEach(({ id, name, description }) => {
-      if(this.nameFields[id].value !== name) {
-        this.nameFields[id].value = name;
-      }
-      if(this.descriptionFields[id].value !== description) {
-        this.descriptionFields[id].value = description;
+      if (!this.props.sessionsUpdating.includes(id) && !this.state.editedSessions.includes(id)) {
+        if (this.nameFields[id].value !== name) {
+          this.nameFields[id].value = name;
+        }
+        if (this.descriptionFields[id].value !== description) {
+          this.descriptionFields[id].value = description;
+        }
       }
     });
   }
@@ -146,7 +148,7 @@ class ConferenceAdminPage extends Component {
                             description: this.descriptionFields[id].value,
                           }));
                         }}>
-                        <Icon name='save' />&nbsp;&nbsp;Save
+                        <Icon name='save' />&nbsp;&nbsp;{this.props.sessionsUpdating.includes(id) ? 'Saving' : 'Save'}
                       </Form.Button>
                     </Form>
                   </Table.Cell>
@@ -303,5 +305,6 @@ export default connect(
     users: state.user.users,
     facilitate: state.facilitate.facilitate,
     facilitators: state.facilitate.facilitators,
+    sessionsUpdating: state.session.sessionsUpdating,
   })
 )(ConferenceAdminPage);

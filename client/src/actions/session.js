@@ -53,6 +53,7 @@ export function updateSession(session) {
     const method = 'PATCH';
     const route = `/conferences/${conferenceId}/sessions/${session.id}`;
     const data = { name: session.name, description: session.description };
+    dispatch(startUpdatingSession(session.id));
     try {
       const response = await request(method, route, data);
       dispatch(receiveUpdatedSession(response));
@@ -61,6 +62,10 @@ export function updateSession(session) {
     }
   }
 }
+
+const startUpdatingSession = (id) => {
+  return { type: actionTypes.START_UPDATING_SESSION, payload: { id } };
+};
 
 export const receiveUpdatedSession = (session) => {
   return { type: actionTypes.RECEIVE_UPDATED_SESSION, payload: { session } };
