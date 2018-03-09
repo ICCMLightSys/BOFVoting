@@ -21,7 +21,12 @@ export default function vote(state = { facilitate: [], facilitators: [] }, actio
       return { ...state, facilitators: action.payload.facilitators };
     }
     case actionTypes.RECEIVE_FACILITATE_ADMIN: {
-      // TODO write this case
+      // const { sessionId, userId, facilitate } = action.payload;
+      // const sessionData = state.facilitators.find(session => session.id === sessionId);
+      // if(!facilitate && sessionData.facilitators.includes(userId)) {
+      //   const newSessionData = { ...sessionData, facilitators: [...sessionData.facilitators] };
+      //   newSessionData.splice()
+      // }
     }
     default: {
       return state;

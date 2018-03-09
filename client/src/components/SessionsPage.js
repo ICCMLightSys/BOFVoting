@@ -58,7 +58,7 @@ class SessionsPage extends Component {
 
   render() {
     return (
-      <div>
+      <div className="sessions-page">
         <Table celled padded>
           <Table.Header>
             <Table.Row textAlign="center">
@@ -81,7 +81,7 @@ class SessionsPage extends Component {
                         `${facilitators} facilitator${facilitators === 1 ? '' : 's'})`
                       }
                     </Header>
-                    {description}
+                    <div>{description}</div>
                   </Table.Cell>
                   <Table.Cell singleLine>
                     <Form>
@@ -124,6 +124,7 @@ class SessionsPage extends Component {
                         this.props.dispatch(setVote(id, voteTypes.YES));
                       }
                     }} />
+                    <label className="facilitate-label">Facilitate</label>
                   </Table.Cell>
                 </Table.Row>
               )

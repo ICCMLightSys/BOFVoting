@@ -24,3 +24,35 @@ body {
   flex: 1;
   margin-right: 10px;
 }
+
+.facilitate-label {
+  display: none;
+}
+
+@media only screen and (max-width: 1024px) {
+  .container {
+    width: 80%;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .container {
+    width: 95%;
+  }
+
+  .facilitate-label {
+    display: inline;
+    margin-left: 10px;
+  }
+
+  .sessions-page .ui.fitted.checkbox {
+    vertical-align: middle;
+  }
+
+  .sessions-page td > * {
+    text-align: center;
+    margin-bottom: 0;
+  }
+
+
+}
