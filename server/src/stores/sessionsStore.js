@@ -184,17 +184,17 @@ class SessionsStore extends Store {
         SELECT SourceVotes.userId, ?, SourceVotes.voteType
           FROM Votes AS SourceVotes
           WHERE SourceVotes.sessionId = ?
-          AND (SELECT COUNT(*) FROM Votes AS DestinationVotes WHERE sessionId = ? AND userId = SourceVotes.userId) = 0
+            AND (SELECT COUNT(*) FROM Votes AS DestinationVotes WHERE sessionId = ? AND userId = SourceVotes.userId) = 0
       `, [destinationSessionId, sourceSessionId, destinationSessionId]);
 
       // When two sessions have different votes by the same user, go with the highest vote value.
       await this.database.query(`
         UPDATE Votes AS DestinationVotes
-        LEFT JOIN Votes AS SourceVotes ON SourceVotes.userId = DestinationVotes.userId
+          LEFT JOIN Votes AS SourceVotes ON SourceVotes.userId = DestinationVotes.userId
         SET DestinationVotes.voteType =
           IF(SourceVotes.voteType = 'Yes' OR DestinationVotes.voteType = 'Yes', 'Yes',
-          IF(SourceVotes.voteType = 'Alt' OR DestinationVotes.voteType = 'Alt', 'Alt',
-          'No'))
+            IF(SourceVotes.voteType = 'Alt' OR DestinationVotes.voteType = 'Alt', 'Alt',
+              'No'))
         WHERE SourceVotes.sessionId = ? AND DestinationVotes.sessionId = ?
       `, [sourceSessionId, destinationSessionId]);
 
