@@ -37,7 +37,6 @@ export default class LoginDialog extends Component {
     let errorContainer;
     if (this.props.loginError !== null) {
       let message = this.props.loginError;
-      console.log(JSON.stringify(message));
       if (message === '') {
         message = 'Invalid username or password.  Please try again.';
       }
@@ -68,6 +67,7 @@ export default class LoginDialog extends Component {
               <label>Password</label>
               <input
                 placeholder="Password"
+                type="password"
                 value={this.state.password}
                 onChange={this.setPassword}
                 onKeyDown={this.onKeyDown}
