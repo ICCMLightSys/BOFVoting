@@ -1,0 +1,1 @@
+ALTER TABLE `Conferences` MODIFY COLUMN `iccmEdition` VARCHAR(255) NOT NULL DEFAULT "us";
