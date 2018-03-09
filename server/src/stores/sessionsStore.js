@@ -49,7 +49,7 @@ class SessionsStore extends Store {
 
     if (includeVotesAndFacilitators) {
       return this.database.query(`
-        SELECT Sessions.id, Sessions.name, Sessions.description, IFNULL(counter.facilitatorCount, 0) as facilitators, IFNULL(voteCounter.votes, 0) as votes
+        SELECT Sessions.id, Sessions.name, Sessions.description, Sessions.forced, IFNULL(counter.facilitatorCount, 0) as facilitators, IFNULL(voteCounter.votes, 0) as votes
           FROM Sessions
           LEFT JOIN (
             SELECT sessionId, COUNT(*) AS facilitatorCount FROM Facilitators GROUP BY sessionId
@@ -72,21 +72,47 @@ class SessionsStore extends Store {
       `, [conferenceId]);
     } else {
       return this.database.query(
-        'SELECT id, name, description FROM Sessions WHERE conferenceId = ?',
+        'SELECT id, name, description, forced FROM Sessions WHERE conferenceId = ?',
         [conferenceId]
       );
     }
   }
 
-  // async findTopSessions(conferenceId) {
-  //   const sessions = this.findAll(conferenceId, false);
-  //
-  //   await Promise.all(sessions.map(this.addVotesAndFacilitators.bind(this)));
-  // }
-  //
-  // async addVoteListsAndFacilitatorsList(session) {
-  //   const yesVoteList = await this.database.stores.votes.
-  // }
+  async findTopSessions(conferenceId, numSessions) {
+    const sessions = this.findAll(conferenceId);
+
+    const forcedSessions = sessions.filter(({ forced }) => forced);
+
+    const numRemainingSessions = numSessions - forcedSessions.length;
+    if (numRemainingSessions < 0) {
+      const forcedSessionsString = forcedSessions.length === 1 ? `is 1 forced session` : `are ${forcedSessions.length} forced sessions`;
+      return { error: `There ${forcedSessionsString} and only ${numSessions} time slot${numSessions === 1 ? '' : 's'}` };
+    }
+
+    const nonForcedSessions = sessions.filter(({ forced }) => !forced);
+    // TODO Break ties
+    nonForcedSessions.sort((a, b) => b.votes - a.votes);
+    const topNonForcedSessions = nonForcedSessions.slice(0, numRemainingSessions);
+
+    const topSessions = forcedSessions.concat(topNonForcedSessions);
+
+    await Promise.all(topSessions.map(this.addVoteListsAndFacilitatorsList.bind(this)));
+
+    return topSessions;
+  }
+
+  async addVoteListsAndFacilitatorsList(session) {
+    const votes = await this.database.stores.votes.findForSession(session.id);
+
+    const yesVotes = votes.filter(({ voteType }) => voteType === 'Yes');
+    const altVotes = votes.filter(({ voteType }) => voteType === 'Alt');
+
+    session.yesVoteUserIds = yesVotes.map(vote => vote.userId);
+    session.altVoteUserIds = altVotes.map(vote => vote.userId);
+
+    const facilitators = await this.database.stores.sessions.getFacilitators(session.id);
+    session.facilitatorUsersIds = facilitators.map(facilitator => facilitator.userId);
+  }
 
   async findAllFacilitatedBy(userId) {
     return await this.database.query(

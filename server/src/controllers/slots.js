@@ -9,7 +9,7 @@ router.post('/conferences/:conferenceId/generateSchedule', requireAuthentication
   // TODO Generate schedule
   const rooms = req.rooms.findAll(req.conferenceId);
   const times = req.times.findAll(req.conferenceId);
-  const sessions = 0;
+  const sessions = req.sessions.findTopSessions(req.conferenceId, rooms.length * times.length);
 
   await new Promise((resolve) => {
     generateSchedule(rooms, times, sessions, (pop, gen, stats) => {
