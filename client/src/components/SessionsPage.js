@@ -57,6 +57,8 @@ class SessionsPage extends Component {
   }
 
   render() {
+    const voteError = id => this.props.voteStatus[id] !== undefined && this.props.voteStatus[id].error !== null;
+    const facilitateError = id => this.props.facilitateStatus[id] !== undefined && this.props.facilitateStatus[id].error !== null;
     return (
       <div className="sessions-page">
         <Table celled padded>
@@ -83,9 +85,10 @@ class SessionsPage extends Component {
                     </Header>
                     <div>
                     {description}
-                    { (this.props.voteStatus[id] !== undefined && this.props.voteStatus[id].error !== null) || (this.props.facilitateStatus[id] !== undefined && this.props.facilitateStatus[id].error !== null) ? <br /> : '' }
-                    { this.props.voteStatus[id] !== undefined && this.props.voteStatus[id].error !== null ? 'Error updating votes. Please try again.' : '' }
-                    { this.props.facilitateStatus[id] !== undefined && this.props.facilitateStatus[id].error !== null ? 'Error updating facilitation status. Please try again.' : '' }
+                    { voteError(id) ? <br /> : '' }
+                    { voteError(id) ? 'Error updating votes. Please try again.' : '' }
+                    { facilitateError(id) ? <br /> : '' }
+                    { facilitateError(id) ? 'Error updating facilitation status. Please try again.' : '' }
                     </div>
                   </Table.Cell>
                   <Table.Cell singleLine>
