@@ -30,6 +30,12 @@ router.patch('/conferences/:conferenceId', requireAuthentication, requireUserToB
   res.status(200).send(conference);
 });
 
+router.get('/conferences/:conferenceId/slots', requireAuthentication, requireUserToBeAdmin, async (req, res) => {
+  const slots = await req.slots.findAll(req.params.conferenceId);
+
+  res.status(200).send(slots);
+});
+
 router.use(require('../middleware/errorHandling'));
 
 module.exports = router;
