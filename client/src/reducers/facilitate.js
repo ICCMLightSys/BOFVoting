@@ -17,6 +17,9 @@ export default function vote(state = { facilitate: [] }, action) {
     case actionTypes.RECEIVE_FACILITATES: {
       return { ...state, facilitate: action.payload.facilitates };
     }
+    case actionTypes.RECEIVE_FACILITATORS: {
+      return { ...state, facilitators: action.payload.facilitators };
+    }
     default: {
       return state;
     }

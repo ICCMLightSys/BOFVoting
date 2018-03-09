@@ -47,3 +47,26 @@ const receiveFacilitates = (facilitates) => {
 export const failFetchFacilitates = (error) => {
   return { type: actionTypes.FAIL_FETCH_FACILITATES, payload: { error } };
 };
+
+export const fetchFacilitators = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const conferenceId = state.conference.conferenceId;
+    const method = 'GET';
+    const route = `/conferences/${conferenceId}/facilitators`;
+    try {
+      const response = await request(method, route);
+      dispatch(receiveFacilitators(response));
+    } catch (error) {
+      dispatch(failFetchFacilitators(error));
+    }
+  }
+};
+
+const receiveFacilitators = (facilitators) => {
+  return { type: actionTypes.RECEIVE_FACILITATORS, payload: { facilitators } };
+};
+
+export const failFetchFacilitators = (error) => {
+  return { type: actionTypes.FAIL_FETCH_FACILITATORS, payload: { error } };
+};

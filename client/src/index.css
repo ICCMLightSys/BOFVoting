@@ -14,3 +14,13 @@ body {
   margin-bottom: 20px;
   width: 100%;
 }
+
+.facilitators-container {
+  display: flex;
+  width: 100%;
+}
+
+.facilitators-dropdown {
+  flex: 1;
+  margin-right: 10px;
+}

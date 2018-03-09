@@ -7,7 +7,7 @@ class App extends Component {
     return (
       <div>
         <p>Conference ID: {this.props.conferenceId}</p>
-        <p>User ID: {this.props.userId}</p>
+        <p>User ID: {this.props.id}</p>
         <NavLink to="/sessions">Sessions</NavLink>
         <br />
         <NavLink to="/conferenceadmin">Conference Admin</NavLink>
@@ -21,6 +21,6 @@ class App extends Component {
 export default connect(
   state => ({
     conferenceId: state.conference.conferenceId,
-    userId: state.user.userId,
+    id: state.user.id,
   })
 )(App);

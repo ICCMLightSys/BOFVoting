@@ -5,6 +5,8 @@ import { setTimes } from '../actions/conference';
 import { fetchSessions, updateSession, deleteSession } from '../actions/session';
 import { fetchVotes } from '../actions/vote';
 import AddSession from './AddSession';
+import { fetchFacilitators } from '../actions/facilitate';
+import { fetchUsers } from '../actions/user';
 
 class ConferenceAdminPage extends Component {
   constructor(props) {
@@ -39,6 +41,8 @@ class ConferenceAdminPage extends Component {
   componentDidMount() {
     this.props.dispatch(fetchSessions(this.props.conferenceId));
     this.props.dispatch(fetchVotes(this.props.conferenceId));
+    this.props.dispatch(fetchFacilitators());
+    this.props.dispatch(fetchUsers());
   }
 
   render() {
@@ -77,7 +81,7 @@ class ConferenceAdminPage extends Component {
                       </p>
                       <Form.Field>
                         <textarea
-                          placeholder='Session description'
+                          placeholder="Session description"
                           defaultValue={description}
                           ref={descriptionField => this.descriptionFields[id] = descriptionField}
                           onChange={() => {
@@ -86,6 +90,20 @@ class ConferenceAdminPage extends Component {
                             }
                           }} />
                       </Form.Field>
+                      <div className="facilitators-container">
+                        <Dropdown className="facilitators-dropdown" placeholder="Select a user" fluid selection
+                          onChange={(e, data) => this.setState({ [`facilitatorsDropdown_${id}`]: data.value })}
+                          options={
+                            this.props.users.map(user => ({ key: user.id, value: user.id, text: user.username }))
+                          }
+                        />
+                        <Form.Button color="green" icon
+                          onClick={() => {
+                            console.log(this.state[`facilitatorsDropdown_${id}`]);
+                          }}>
+                          <Icon name='plus' />&nbsp;&nbsp;Add Facilitator
+                        </Form.Button>
+                      </div>
                     </Form>
                   </Table.Cell>
                   <Table.Cell textAlign="center">
@@ -255,6 +273,8 @@ export default connect(
     conferenceId: state.conference.conferenceId,
     sessions: state.session.sessions,
     votes: state.vote.votes,
+    users: state.user.users,
     facilitate: state.facilitate.facilitate,
+    facilitators: state.facilitate.facilitators,
   })
 )(ConferenceAdminPage);
