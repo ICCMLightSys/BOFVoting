@@ -17,7 +17,7 @@ router.get('/conferences/:conferenceId/facilitators', requireAuthentication, req
   res.status(200).send(responseData);
 });
 
-router.post('/conferences/:conferenceId/sessions/:sessionId/facilitate', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
+router.post('/sessions/:sessionId/facilitate', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   if (typeof req.body !== 'object' || req.body.facilitate == null) {
     throw new HttpResponseError('BAD_REQUEST', 'Request body must include the facilitate property');
   }

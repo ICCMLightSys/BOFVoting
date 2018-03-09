@@ -81,7 +81,12 @@ class SessionsPage extends Component {
                         `${facilitators} facilitator${facilitators === 1 ? '' : 's'})`
                       }
                     </Header>
-                    <div>{description}</div>
+                    <div>
+                    {description}
+                    { (this.props.voteStatus[id] !== undefined && this.props.voteStatus[id].error !== null) || (this.props.facilitateStatus[id] !== undefined && this.props.facilitateStatus[id].error !== null) ? <br /> : '' }
+                    { this.props.voteStatus[id] !== undefined && this.props.voteStatus[id].error !== null ? 'Error updating votes. Please try again.' : '' }
+                    { this.props.facilitateStatus[id] !== undefined && this.props.facilitateStatus[id].error !== null ? 'Error updating facilitation status. Please try again.' : '' }
+                    </div>
                   </Table.Cell>
                   <Table.Cell singleLine>
                     <Form>
@@ -92,7 +97,7 @@ class SessionsPage extends Component {
                           value="yes"
                           checked={this.props.votes[id] === voteTypes.YES}
                           onChange={() => this.props.dispatch(setVote(id, voteTypes.YES))}
-                          disabled={this.props.facilitate.includes(id)}
+                          disabled={this.props.facilitate[id] === true}
                         />
                       </Form.Field>
                       <Form.Field>
@@ -102,7 +107,7 @@ class SessionsPage extends Component {
                           value="alt"
                           checked={this.props.votes[id] === voteTypes.ALT}
                           onChange={() => this.props.dispatch(setVote(id, voteTypes.ALT))}
-                          disabled={this.props.facilitate.includes(id)}
+                          disabled={this.props.facilitate[id] === true}
                         />
                       </Form.Field>
                       <Form.Field>
@@ -112,13 +117,13 @@ class SessionsPage extends Component {
                           value="no"
                           checked={this.props.votes[id] === voteTypes.NO || this.props.votes[id] === undefined}
                           onChange={() => this.props.dispatch(setVote(id, voteTypes.NO))}
-                          disabled={this.props.facilitate.includes(id)}
+                          disabled={this.props.facilitate[id] === true}
                         />
                       </Form.Field>
                     </Form>
                   </Table.Cell>
                   <Table.Cell textAlign="center">
-                    <Checkbox checked={this.props.facilitate.includes(id)} onChange={(e, data) => {
+                    <Checkbox checked={this.props.facilitate[id] === true} onChange={(e, data) => {
                       this.props.dispatch(setFacilitate(id, data.checked));
                       if(data.checked) {
                         this.props.dispatch(setVote(id, voteTypes.YES));
@@ -142,6 +147,8 @@ export default connect(
     conferenceId: state.conference.conferenceId,
     sessions: state.session.sessions,
     votes: state.vote.votes,
+    voteStatus: state.vote.voteStatus,
     facilitate: state.facilitate.facilitate,
+    facilitateStatus: state.facilitate.facilitateStatus,
   })
 )(SessionsPage);

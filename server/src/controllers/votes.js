@@ -5,7 +5,7 @@ const requireAuthentication = require('../middleware/authentication');
 
 const router = express.Router();
 
-router.post('/conferences/:conferenceId/sessions/:sessionId/votes', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
+router.post('/sessions/:sessionId/votes', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   if (await req.users.isFacilitating(req.authentication.userId, req.params.sessionId)) {
     throw new HttpResponseError('FORBIDDEN', "A facilitator can't change their vote");
   }

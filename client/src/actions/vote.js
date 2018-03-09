@@ -2,28 +2,9 @@ import * as actionTypes from '../constants/actionTypes';
 import { request } from './request';
 
 export function setVote(sessionId, voteType) {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const conferenceId = state.conference.conferenceId;
-    const method = 'POST';
-    const route = `/conferences/${conferenceId}/sessions/${sessionId}/votes`;
-    const data = { voteType: voteType.substring(0, 1).toUpperCase() + voteType.substring(1).toLowerCase() };
-    try {
-      const response = await request(method, route, data);
-      dispatch(receiveVote(sessionId, response.voteType));
-    } catch (error) {
-      dispatch(failSetVote(error));
-    }
-  }
+  const payload = { sessionId, voteType: voteType.substring(0, 1).toUpperCase() + voteType.substring(1).toLowerCase() };
+  return { type: actionTypes.SET_VOTE, payload: payload };
 }
-
-export const receiveVote = (sessionId, voteType) => {
-  return { type: actionTypes.RECEIVE_VOTE, payload: { sessionId, voteType } };
-};
-
-export const failSetVote = (error) => {
-  return { type: actionTypes.FAIL_SET_VOTE, payload: { error } };
-};
 
 export const fetchVotes = () => {
   return async (dispatch, getState) => {

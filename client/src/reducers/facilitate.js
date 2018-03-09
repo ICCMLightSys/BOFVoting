@@ -1,20 +1,31 @@
 import * as actionTypes from '../constants/actionTypes';
 
-export default function vote(state = { facilitate: [], facilitators: [] }, action) {
+export default function vote(state = { facilitate: {}, facilitators: [], facilitateStatus: {} }, action) {
   switch(action.type) {
+    case actionTypes.SET_FACILITATE: {
+      const { sessionId, facilitate } = action.payload;
+      return {
+        ...state,
+        facilitate: { ...state.facilitate, [sessionId]: facilitate },
+        facilitateStatus: { ...state.facilitateStatus, [sessionId]: { writing: true, error: null} },
+      };
+    }
+    case actionTypes.SET_FACILITATE_COMPLETE: {
+      const sessionId = action.payload;
+      return { ...state, facilitateStatus: { ...state.facilitateStatus, [sessionId]: { writing: false, error: null } } };
+    }
+    case actionTypes.SET_FACILITATE_FAILED: {
+      const { sessionId } = action.payload;
+      return { ...state, facilitateStatus: { ...state.facilitateStatus, [sessionId]: { writing: false, error: action.error } } };
+    }
     case actionTypes.RECEIVE_FACILITATE: {
       const { sessionId, facilitate } = action.payload;
-      if(!facilitate && state.facilitate.includes(sessionId)) {
-        const facilitate = [...state.facilitate];
-        facilitate.splice(facilitate.indexOf(sessionId), 1);
-        return { ...state, facilitate };
-      } else if(facilitate && !state.facilitate.includes(sessionId)) {
-        return { ...state, facilitate: [...state.facilitate, sessionId] };
-      } else {
-        return state;
-      }
+      return { ...state, facilitate: { ...state.facilitate, [sessionId]: facilitate }};
     }
     case actionTypes.RECEIVE_FACILITATES: {
+      const newFacilitate = state.facilitate.splice();
+      Object.keys(newFacilitate).forEach(key => newFacilitate[key] = false);
+      action.payload.facilitates.forEach(sessionId => newFacilitate[sessionId] = true);
       return { ...state, facilitate: action.payload.facilitates };
     }
     case actionTypes.RECEIVE_FACILITATORS: {
