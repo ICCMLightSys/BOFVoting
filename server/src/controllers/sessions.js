@@ -31,7 +31,13 @@ router.delete('/conferences/:conferenceId/sessions/:sessionId', requireAuthentic
   res.status(204).send({ });
 });
 
-router.get('/conferences/:conferenceId/facilitate', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
+router.get('/conferences/:conferenceId/sessions/facilitators', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
+  const sessions = await req.sessions.findAllFacilitatedBy(req.authentication.userId);
+
+  res.status(200).send(sessions.map(session => session.id));
+});
+
+router.get('/conferences/:conferenceId/facilitators', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
   const sessions = await req.sessions.findAllFacilitatedBy(req.authentication.userId);
 
   res.status(200).send(sessions.map(session => session.id));
