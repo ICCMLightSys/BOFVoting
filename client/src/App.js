@@ -15,6 +15,8 @@ class App extends Component {
         <br />
         <NavLink to="/siteadmin">Site Admin</NavLink>
         <br />
+        <NavLink to="/schedule">Show Schedule</NavLink>
+        <br />
         <a onClick={() => this.props.dispatch(logout())}>Log out</a>
       </div>
     );

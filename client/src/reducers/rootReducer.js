@@ -5,6 +5,9 @@ import session from './session';
 import user from './user';
 import vote from './vote';
 import facilitate from './facilitate';
+import room from './room';
+import time from './time';
+import slot from './slot';
 
 const root = optimist(combineReducers({
   conference,
@@ -12,6 +15,9 @@ const root = optimist(combineReducers({
   user,
   vote,
   facilitate,
+  room,
+  slot,
+  time
 }));
 
 export default root;

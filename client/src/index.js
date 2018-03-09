@@ -13,6 +13,8 @@ import App from './App';
 import SessionsPage from './components/SessionsPage';
 import ConferenceAdminPage from './components/ConferenceAdminPage';
 import SiteAdminPage from './components/SiteAdminPage';
+import SchedulePage from './components/SchedulePage';
+import { setJwtToken } from './actions/request';
 import api from './middleware/api';
 
 import './polyfill';
@@ -34,14 +36,15 @@ store.dispatch(loadPreviousLoginSession());
 ReactDOM.render(
   <Provider store={store}>
     <LoginRequired>
-      <Router>
-        <div className="container">
-          <Route exact path="/" component={App} />
-          <Route path="/sessions" component={SessionsPage} />
-          <Route path="/conferenceadmin" component={ConferenceAdminPage} />
-          <Route path="/siteadmin" component={SiteAdminPage} />
-        </div>
-      </Router>
+    <Router>
+      <div className="container">
+        <Route exact path="/" component={App} />
+        <Route path="/sessions" component={SessionsPage} />
+        <Route path="/conferenceadmin" component={ConferenceAdminPage} />
+        <Route path="/siteadmin" component={SiteAdminPage} />
+        <Route path="/schedule" component={SchedulePage} />
+      </div>
+    </Router>
     </LoginRequired>
   </Provider>,
   document.getElementById('root')
