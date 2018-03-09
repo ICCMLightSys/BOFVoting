@@ -9,3 +9,8 @@ body {
   width: 40%;
   margin: auto;
 }
+
+.timezone-dropdown {
+  margin-bottom: 20px;
+  width: 100%;
+}

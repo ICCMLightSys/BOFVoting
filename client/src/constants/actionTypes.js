@@ -1,6 +1,10 @@
 // users
 export const SOMETHING_DONE_TO_USER = 'SOMETHING_DONE_TO_USER';
 
+// conference
+export const RECEIVE_CONFERENCE = 'RECEIVE_CONFERENCE';
+export const FAIL_SET_TIMES = 'FAIL_SET_TIMES';
+
 // sessions
 export const RECEIVE_NEW_SESSION = 'RECEIVE_NEW_SESSION';
 export const FAIL_ADD_SESSION = 'FAIL_ADD_SESSION';
