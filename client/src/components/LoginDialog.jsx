@@ -35,9 +35,10 @@ export default class LoginDialog extends Component {
 
   render() {
     let errorContainer;
-    if (this.props.loginError) {
+    if (this.props.loginError !== null) {
       let message = this.props.loginError;
-      if (message === 'Forbidden') {
+      console.log(JSON.stringify(message));
+      if (message === '') {
         message = 'Invalid username or password.  Please try again.';
       }
 

@@ -1,6 +1,8 @@
 import * as actionTypes from '../constants/actionTypes';
 
-export default function vote(state = { votes: {}, voteStatus: {} }, action) {
+const defaultState = { votes: {}, voteStatus: {} };
+
+export default function vote(state = defaultState, action) {
   switch(action.type) {
     case actionTypes.SET_VOTE: {
       const { sessionId, voteType } = action.payload;
@@ -24,6 +26,9 @@ export default function vote(state = { votes: {}, voteStatus: {} }, action) {
         votes[sessionId] = voteType;
       });
       return { ...state, votes };
+    }
+    case actionTypes.LOGOUT: {
+      return defaultState;
     }
     default: {
       return state;

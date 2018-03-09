@@ -1,6 +1,8 @@
 import * as actionTypes from '../constants/actionTypes';
 
-export default function vote(state = { facilitate: {}, facilitators: [], facilitateStatus: {} }, action) {
+const defaultState = { facilitate: {}, facilitators: [], facilitateStatus: {} };
+
+export default function vote(state = defaultState, action) {
   switch(action.type) {
     case actionTypes.SET_FACILITATE: {
       const { sessionId, facilitate } = action.payload;
@@ -35,6 +37,9 @@ export default function vote(state = { facilitate: {}, facilitators: [], facilit
       //   newSessionData.splice()
       // }
       return state;
+    }
+    case actionTypes.LOGOUT: {
+      return defaultState;
     }
     default: {
       return state;

@@ -25,6 +25,10 @@ export default function user(state = defaultState, action) {
       return { ...state, loginRunning: false, loginError: action.payload.errorMessage };
     }
 
+    case actionTypes.LOGOUT: {
+      return defaultState;
+    }
+
     default: {
       return state;
     }

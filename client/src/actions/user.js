@@ -36,11 +36,26 @@ export const loginSucceeded = (jwtToken) => ({
   type: actionTypes.LOGIN, payload: { jwtToken }
 });
 
+export const logoutSucceeded = () => ({
+  type: actionTypes.LOGOUT,
+});
+
+export const loadPreviousLoginSession = () => dispatch => {
+  const token = window.localStorage.getItem('jwtToken');
+
+  if (token != null) {
+    dispatch(loginSucceeded(token));
+  }
+};
+
 export const login = (username, password) => dispatch => {
   dispatch(loginStarted());
 
   return request('POST', '/tokens', { username, password })
-    .then(({ token }) => dispatch(loginSucceeded(token)))
+    .then(({ token }) => {
+      window.localStorage.setItem('jwtToken', token);
+      return dispatch(loginSucceeded(token))
+    })
     .catch((err) => dispatch(loginFailed(err.message)));
 };
 
@@ -54,4 +69,10 @@ export const signup = (username, password) => async dispatch => {
   }
 
   return dispatch(login(username, password));
+};
+
+export const logout = () => dispatch => {
+  window.localStorage.removeItem('jwtToken');
+
+  dispatch(logoutSucceeded());
 };

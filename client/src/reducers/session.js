@@ -1,6 +1,8 @@
 import * as actionTypes from '../constants/actionTypes';
 
-export default function session(state = { sessions: [], sessionsUpdating: [] }, action) {
+const defaultState = { sessions: [], sessionsUpdating: [] };
+
+export default function session(state = defaultState, action) {
   switch(action.type) {
     case actionTypes.RECEIVE_NEW_SESSION: {
       return { ...state, sessions: state.sessions.concat([action.payload.session]) };
@@ -31,6 +33,9 @@ export default function session(state = { sessions: [], sessionsUpdating: [] }, 
       const indexToReplace = sessions.findIndex(session => session.id === destinationSessionId);
       sessions[indexToReplace] = session;
       return { ...state, sessions };
+    }
+    case actionTypes.LOGOUT: {
+      return defaultState;
     }
     default: {
       return state;

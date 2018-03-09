@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import { logout } from './actions/user';
 
 class App extends Component {
   render() {
@@ -13,6 +14,8 @@ class App extends Component {
         <NavLink to="/conferenceadmin">Conference Admin</NavLink>
         <br />
         <NavLink to="/siteadmin">Site Admin</NavLink>
+        <br />
+        <a onClick={() => this.props.dispatch(logout())}>Log out</a>
       </div>
     );
   }

@@ -12,12 +12,12 @@ import 'semantic-ui-css/semantic.min.css';
 import App from './App';
 import SessionsPage from './components/SessionsPage';
 import ConferenceAdminPage from './components/ConferenceAdminPage';
-import SiteAdminPage from './components/SiteAdminPage'
-import { setJwtToken } from './actions/request';
+import SiteAdminPage from './components/SiteAdminPage';
 import api from './middleware/api';
 
 import './polyfill';
 import LoginRequired from './components/LoginRequired';
+import { loadPreviousLoginSession } from './actions/user';
 
 const middleware = compose(
   applyMiddleware(thunk, api),
@@ -29,7 +29,7 @@ const store = createStore(
   middleware
 );
 
-setJwtToken(store.getState().user.jwtToken);
+store.dispatch(loadPreviousLoginSession());
 
 ReactDOM.render(
   <Provider store={store}>

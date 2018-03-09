@@ -4,6 +4,7 @@ export const FAIL_FETCH_USERS = 'FAIL_FETCH_USERS';
 export const LOGIN = 'LOGIN';
 export const START_LOGIN = 'START_LOGIN';
 export const FAIL_LOGIN = 'FAIL_LOGIN';
+export const LOGOUT = 'LOGOUT';
 
 // conference
 export const RECEIVE_CONFERENCES = 'RECEIVE_CONFERENCES';

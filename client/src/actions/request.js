@@ -1,20 +1,19 @@
 import configuration from '../configuration';
 
 const baseApiUrl = configuration.baseApiUrl;
-let jwtToken;
-
-export const setJwtToken = (token) => {
-  jwtToken = token;
-};
 
 export const request = (method, route, data = null) => {
   const requestConfiguration = {
     method,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `jwt ${jwtToken}`,
     },
   };
+
+  const token = window.localStorage.getItem('jwtToken');
+  if (token != null) {
+    requestConfiguration.headers['Authorization'] = `jwt ${token}`;
+  }
 
   if (data != null) {
     requestConfiguration.body = JSON.stringify(data);

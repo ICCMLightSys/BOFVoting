@@ -13,6 +13,9 @@ export default function conference(state = defaultState, action) {
     case actionTypes.RECEIVE_CONFERENCE: {
       return { ...state, conferenceId: action.payload.conference.id };
     }
+    case actionTypes.LOGOUT: {
+      return defaultState;
+    }
     default: {
       return state;
     }
