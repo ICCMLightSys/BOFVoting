@@ -38,6 +38,7 @@ export const request = (method, route, data = null) => {
         } else {
           resolve();
         }
-      });
+      })
+      .catch(() => reject(new Error('Failed to connect to server')));
   });
 };

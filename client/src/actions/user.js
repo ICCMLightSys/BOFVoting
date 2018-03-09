@@ -48,7 +48,7 @@ export const signup = (username, password) => async dispatch => {
   dispatch(loginStarted());
 
   try {
-    await request('POST', '/users', { username, password })
+    await request('POST', '/users', { username, password });
   } catch (e) {
     return dispatch(loginFailed(e.message));
   }
