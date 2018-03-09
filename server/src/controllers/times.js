@@ -30,4 +30,6 @@ router.delete('/conferences/:conferenceId/times/:timeId', requireAuthentication,
   res.status(204).send({ });
 });
 
+router.use(require('../middleware/errorHandling'));
+
 module.exports = router;
