@@ -30,7 +30,7 @@ export const fetchFacilitates = () => {
     const state = getState();
     const conferenceId = state.conference.conferenceId;
     const method = 'GET';
-    const route = `/conferences/${conferenceId}/facilitate`;
+    const route = `/conferences/${conferenceId}/sessions/facilitators`;
     try {
       const response = await request(method, route);
       dispatch(receiveFacilitates(response));
