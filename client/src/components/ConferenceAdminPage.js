@@ -61,109 +61,122 @@ class ConferenceAdminPage extends Component {
   render() {
     return (
       <div>
-        <Table celled padded>
-          <Table.Header>
-            <Table.Row textAlign="center">
-              <Table.HeaderCell width="12" singleLine>BOF sessions</Table.HeaderCell>
-              <Table.HeaderCell>Save</Table.HeaderCell>
-              <Table.HeaderCell>Delete</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-            {
-              this.props.sessions.sort((a, b) => {
-                return a.id > b.id ? 1 : -1;
-              }).map(({ id, name, votes, facilitators, description }) =>
-                <Table.Row key={id}>
-                  <Table.Cell>
-                    <Form>
-                      <Form.Field>
-                        <input
-                          placeholder='Session name'
-                          defaultValue={name}
-                          ref={nameField => this.nameFields[id] = nameField}
-                          onChange={() => {
-                            if(!this.state.editedSessions.includes(id)) {
-                              this.setState({ editedSessions: this.state.editedSessions.concat([id]) });
-                            }
-                          }} />
-                      </Form.Field>
-                      <p>
-                        {`(${votes} votes, ${facilitators} facilitator${facilitators === 1 ? '' : 's'})`}
-                      </p>
-                      <Form.Field>
-                        <textarea
-                          placeholder="Session description"
-                          defaultValue={description}
-                          ref={descriptionField => this.descriptionFields[id] = descriptionField}
-                          onChange={() => {
-                            if(!this.state.editedSessions.includes(id)) {
-                              this.setState({ editedSessions: this.state.editedSessions.concat([id]) });
-                            }
-                          }} />
-                      </Form.Field>
-                      <div className="facilitators-and-merging-container">
-                        <Dropdown className="facilitators-and-merging-dropdown" placeholder="Select a user" fluid selection
-                          onChange={(e, data) => this.setState({ [`facilitatorsDropdown_${id}`]: data.value })}
-                          options={
-                            this.props.users.map(user => ({ key: user.id, value: user.id, text: user.username }))
-                          }
-                        />
-                        <Form.Button color="green" icon
-                           onClick={() => {
-                             this.props.dispatch(setFacilitateAdmin(id, this.state[`facilitatorsDropdown_${id}`], true));
-                           }}>
-                          <Icon name='plus' />&nbsp;&nbsp;Add Facilitator
-                        </Form.Button>
-                      </div>
-                      <div className="facilitators-and-merging-container">
-                        <Dropdown className="facilitators-and-merging-dropdown" placeholder="Select another session" fluid selection
-                          onChange={(e, data) => this.setState({ [`sessionsDropdown_${id}`]: data.value })}
-                          options={
-                            this.props.sessions
-                              .filter(session => session.id !== id)
-                              .map(session => ({ key: session.id, value: session.id, text: session.name }))
-                          }
-                        />
-                        <Form.Button color="green" icon
-                           onClick={() => {
-                             this.props.dispatch(mergeSessions(id, this.state[`sessionsDropdown_${id}`]));
-                           }}>
-                          <Icon name='refresh' />&nbsp;&nbsp;Merge
-                        </Form.Button>
-                      </div>
-                    </Form>
-                  </Table.Cell>
-                  <Table.Cell textAlign="center">
-                    <Form>
-                      <Form.Button disabled={!this.state.editedSessions.includes(id)} color="green" icon
-                        onClick={() => {
-                          const editedSessions = [...this.state.editedSessions];
-                          editedSessions.splice(editedSessions.indexOf(id), 1);
-                          this.setState({ editedSessions });
-                          this.props.dispatch(updateSession({
-                            id,
-                            name: this.nameFields[id].value,
-                            description: this.descriptionFields[id].value,
-                          }));
-                        }}>
-                        <Icon name='save' />&nbsp;&nbsp;{this.props.sessionsUpdating.includes(id) ? 'Saving' : 'Save'}
-                      </Form.Button>
-                    </Form>
-                  </Table.Cell>
-                  <Table.Cell textAlign="center">
-                    <Form>
-                      <Form.Button color="red" icon onClick={() => this.props.dispatch(deleteSession(id))}>
-                        <Icon name='trash' />&nbsp;&nbsp;Delete
-                      </Form.Button>
-                    </Form>
-                  </Table.Cell>
+        {
+          this.props.fetchingSessions ? (
+            <h2>Loading sessions...</h2>
+          ) : (
+            <Table celled padded>
+              <Table.Header>
+                <Table.Row textAlign="center">
+                  <Table.HeaderCell width="12" singleLine>BOF sessions</Table.HeaderCell>
+                  <Table.HeaderCell>Save</Table.HeaderCell>
+                  <Table.HeaderCell>Delete</Table.HeaderCell>
                 </Table.Row>
-              )
-            }
-          </Table.Body>
-        </Table>
+              </Table.Header>
+
+              <Table.Body>
+                {
+                  this.props.sessions.sort((a, b) => {
+                    return a.id > b.id ? 1 : -1;
+                  }).map(({id, name, votes, facilitators, description}) =>
+                    <Table.Row key={id}>
+                      <Table.Cell>
+                        <Form>
+                          <Form.Field>
+                            <input
+                              placeholder='Session name'
+                              defaultValue={name}
+                              ref={nameField => this.nameFields[id] = nameField}
+                              onChange={() => {
+                                if (!this.state.editedSessions.includes(id)) {
+                                  this.setState({editedSessions: this.state.editedSessions.concat([id])});
+                                }
+                              }}/>
+                          </Form.Field>
+                          <p>
+                            {`(${votes} votes, ${facilitators} facilitator${facilitators === 1 ? '' : 's'})`}
+                          </p>
+                          <Form.Field>
+                            <textarea
+                              placeholder="Session description"
+                              defaultValue={description}
+                              ref={descriptionField => this.descriptionFields[id] = descriptionField}
+                              onChange={() => {
+                                if (!this.state.editedSessions.includes(id)) {
+                                  this.setState({editedSessions: this.state.editedSessions.concat([id])});
+                                }
+                              }}/>
+                          </Form.Field>
+                          <div className="facilitators-and-merging-container">
+                            <Dropdown className="facilitators-and-merging-dropdown" placeholder="Select a user" fluid
+                              selection
+                              onChange={(e, data) => this.setState({[`facilitatorsDropdown_${id}`]: data.value})}
+                              options={
+                                this.props.users.map(user => ({
+                                  key: user.id,
+                                  value: user.id,
+                                  text: user.username
+                                }))
+                              }
+                            />
+                            <Form.Button color="green" icon
+                              onClick={() => {
+                                this.props.dispatch(setFacilitateAdmin(id, this.state[`facilitatorsDropdown_${id}`], true));
+                              }}>
+                              <Icon name='plus'/>&nbsp;&nbsp;Add Facilitator
+                            </Form.Button>
+                          </div>
+                          <div className="facilitators-and-merging-container">
+                            <Dropdown className="facilitators-and-merging-dropdown" placeholder="Select another session"
+                              fluid selection
+                              onChange={(e, data) => this.setState({[`sessionsDropdown_${id}`]: data.value})}
+                              options={
+                                this.props.sessions
+                                  .filter(session => session.id !== id)
+                                  .map(session => ({key: session.id, value: session.id, text: session.name}))
+                              }
+                            />
+                            <Form.Button color="green" icon
+                              onClick={() => {
+                                this.props.dispatch(mergeSessions(id, this.state[`sessionsDropdown_${id}`]));
+                              }}>
+                              <Icon name='refresh'/>&nbsp;&nbsp;Merge
+                            </Form.Button>
+                          </div>
+                        </Form>
+                      </Table.Cell>
+                      <Table.Cell textAlign="center">
+                        <Form>
+                          <Form.Button disabled={!this.state.editedSessions.includes(id)} color="green" icon
+                            onClick={() => {
+                              const editedSessions = [...this.state.editedSessions];
+                              editedSessions.splice(editedSessions.indexOf(id), 1);
+                              this.setState({editedSessions});
+                              this.props.dispatch(updateSession({
+                                id,
+                                name: this.nameFields[id].value,
+                                description: this.descriptionFields[id].value,
+                              }));
+                            }}>
+                            <Icon
+                              name='save'/>&nbsp;&nbsp;{this.props.sessionsUpdating.includes(id) ? 'Saving' : 'Save'}
+                          </Form.Button>
+                        </Form>
+                      </Table.Cell>
+                      <Table.Cell textAlign="center">
+                        <Form>
+                          <Form.Button color="red" icon onClick={() => this.props.dispatch(deleteSession(id))}>
+                            <Icon name='trash'/>&nbsp;&nbsp;Delete
+                          </Form.Button>
+                        </Form>
+                      </Table.Cell>
+                    </Table.Row>
+                  )
+                }
+              </Table.Body>
+            </Table>
+          )
+        }
         <AddSession />
         <h2>Change Nomination and Voting Times</h2>
         <Dropdown className="timezone-dropdown" placeholder="Time Zone" search selection
@@ -306,5 +319,6 @@ export default connect(
     facilitate: state.facilitate.facilitate,
     facilitators: state.facilitate.facilitators,
     sessionsUpdating: state.session.sessionsUpdating,
+    fetchingSessions: state.session.fetchingSessions,
   })
 )(ConferenceAdminPage);
