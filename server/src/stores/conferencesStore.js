@@ -2,7 +2,7 @@ const tokenGenerator = require('generate-password');
 const { ValidationError } = require('./errors.js');
 const Store = require('./store.js');
 
-const DATETIME_FIELDS = ['submissionStart', 'submissionDeadline', 'votingStart', 'votingDeadline'];
+const DATETIME_FIELDS = ['submissionStart', 'submissionEnd', 'votingStart', 'votingEnd'];
 
 function validateConference(conferenceData) {
   if (conferenceData == null || typeof conferenceData !== 'object') {
@@ -69,7 +69,7 @@ class ConferencesStore extends Store {
 
     const result = await this.database.query(`
       INSERT INTO Conferences (
-        name, maxVotes, isArchived, invitationCode, submissionStart, submissionDeadline, votingStart, votingDeadline
+        name, maxVotes, isArchived, invitationCode, submissionStart, submissionEnd, votingStart, votingEnd
       ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       conferenceData.name,
@@ -77,9 +77,9 @@ class ConferencesStore extends Store {
       conferenceData.isArchived,
       invitationCode,
       conferenceData.submissionStart,
-      conferenceData.submissionDeadline,
+      conferenceData.submissionEnd,
       conferenceData.votingStart,
-      conferenceData.votingDeadline,
+      conferenceData.votingEnd,
     ]);
 
     return result.insertId;
