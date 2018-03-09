@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Dropdown, Form, Table } from 'semantic-ui-react';
+import { Dropdown, Form, Icon, Table } from 'semantic-ui-react';
 import { fetchConferences, patchConference } from '../actions/conference';
 import { fetchSessions } from '../actions/session';
 import { fetchVotes } from '../actions/vote';
@@ -17,26 +17,12 @@ class SiteAdminPage extends Component {
     };
 
     this.handleEditConferenceSubmit = this.handleEditConferenceSubmit.bind(this);
-    this.handleEditRoomsSubmit = this.handleEditRoomsSubmit.bind(this);
-    this.handleEditRoundsSubmit = this.handleEditRoundsSubmit.bind(this);
   }
 
   handleEditConferenceSubmit() {
     const { name, year, iccmEdition, maxVotes } = this.state;
     const data = { name, year, iccmEdition, maxVotes };
     this.props.dispatch(patchConference(data));
-  }
-
-  handleEditRoomsSubmit(e, data) {
-    // const session = { name: this.nameField.value, description: this.descriptionField.value };
-    // this.props.dispatch(addSession(session));
-    alert('TODO update rooms');
-  }
-
-  handleEditRoundsSubmit(e, data) {
-    // const session = { name: this.nameField.value, description: this.descriptionField.value };
-    // this.props.dispatch(addSession(session));
-    alert('TODO update rounds');
   }
 
   componentDidMount() {
@@ -96,26 +82,38 @@ class SiteAdminPage extends Component {
         <Table celled padded>
           <Table.Header>
             <Table.Row textAlign="center">
-              <Table.HeaderCell>Room Number</Table.HeaderCell>
               <Table.HeaderCell>Room Name</Table.HeaderCell>
+              <Table.HeaderCell>Save</Table.HeaderCell>
+              <Table.HeaderCell>Delete</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
             {
-              this.props.rooms.map((room, i) => (
+              this.props.rooms.map(room => (
                 <Table.Row>
-                  <Table.Cell>
+                  <Table.Cell textAlign="center">
                     <Form>
                       <Form.Field>
-                        <input type="number" placeholder='#' defaultValue={i + 1} />
+                        <input placeholder="Room name" defaultValue={room} />
                       </Form.Field>
                     </Form>
                   </Table.Cell>
                   <Table.Cell textAlign="center">
                     <Form>
                       <Form.Field>
-                        <input placeholder="Room name" defaultValue={room} />
+                        <Form.Button color="green" icon onClick={() => alert('TODO save')}>
+                          <Icon name='save'/>&nbsp;&nbsp;Save
+                        </Form.Button>
+                      </Form.Field>
+                    </Form>
+                  </Table.Cell>
+                  <Table.Cell textAlign="center">
+                    <Form>
+                      <Form.Field>
+                        <Form.Button color="red" icon onClick={() => alert('TODO delete')}>
+                          <Icon name='trash'/>&nbsp;&nbsp;Delete
+                        </Form.Button>
                       </Form.Field>
                     </Form>
                   </Table.Cell>
@@ -124,15 +122,20 @@ class SiteAdminPage extends Component {
             }
           </Table.Body>
         </Table>
-        <Form>
-          <Form.Button color="green" type="submit" onClick={this.handleEditRoomsSubmit}>Submit</Form.Button>
-        </Form>
+        <div className="add-room-and-rounds-container">
+          <Form.Input className="add-room-and-rounds-textbox" placeholder="Enter a room name" />
+          <Form.Button color="green" type="submit" onClick={this.handleEditRoomsSubmit}>
+            <Icon name='plus'/>&nbsp;&nbsp;Add
+          </Form.Button>
+        </div>
         <h2>Rounds</h2>
         <Table celled padded>
           <Table.Header>
             <Table.Row textAlign="center">
               <Table.HeaderCell>Round Number</Table.HeaderCell>
               <Table.HeaderCell>Round Name</Table.HeaderCell>
+              <Table.HeaderCell>Save</Table.HeaderCell>
+              <Table.HeaderCell>Delete</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
 
@@ -154,30 +157,36 @@ class SiteAdminPage extends Component {
                       </Form.Field>
                     </Form>
                   </Table.Cell>
+                  <Table.Cell textAlign="center">
+                    <Form>
+                      <Form.Field>
+                        <Form.Button color="green" icon onClick={() => alert('TODO save')}>
+                          <Icon name='save'/>&nbsp;&nbsp;Save
+                        </Form.Button>
+                      </Form.Field>
+                    </Form>
+                  </Table.Cell>
+                  <Table.Cell textAlign="center">
+                    <Form>
+                      <Form.Field>
+                        <Form.Button color="red" icon onClick={() => alert('TODO delete')}>
+                          <Icon name='trash'/>&nbsp;&nbsp;Delete
+                        </Form.Button>
+                      </Form.Field>
+                    </Form>
+                  </Table.Cell>
                 </Table.Row>
               ))
             }
           </Table.Body>
         </Table>
-        <Form>
-          <Form.Button color="green" type="submit" onClick={this.handleEditRoundsSubmit}>Submit</Form.Button>
-        </Form>
-        <h2>Archive Conference</h2>
-        <Form>
-          <Form.Field>
-            <label>Name: {'Conference Name'}</label>
-          </Form.Field>
-          <Form.Field>
-            <label>Year: {2018}</label>
-          </Form.Field>
-          <Form.Field>
-            <label>Users: {76}</label>
-          </Form.Field>
-          <Form.Field>
-            <label>Sessions: {32}</label>
-          </Form.Field>
-          <Form.Button color="red" type="submit" onClick={this.handleEditConferenceSubmit}>Archive</Form.Button>
-        </Form>
+        <div className="add-room-and-rounds-container">
+          <Form.Input className="add-room-and-rounds-textbox" placeholder="Enter a round number" />
+          <Form.Input className="add-room-and-rounds-textbox" placeholder="Enter a round name" />
+          <Form.Button color="green" type="submit" onClick={this.handleEditRoomsSubmit}>
+            <Icon name='plus'/>&nbsp;&nbsp;Add
+          </Form.Button>
+        </div>
       </div>
     );
   }

@@ -73,3 +73,15 @@ body {
   height: 100%;
 }
 
+.add-room-and-rounds-container {
+  display: flex;
+}
+
+.add-room-and-rounds-container > .add-room-and-rounds-textbox {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.add-room-and-rounds-container > .add-room-and-rounds-textbox > .ui.input {
+  width: 100%;
+}
