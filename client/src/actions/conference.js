@@ -1,6 +1,10 @@
 import * as actionTypes from '../constants/actionTypes';
 import { request } from './request';
 
+export function switchConference(id) {
+  return { type: actionTypes.SWITCH_CONFERENCE, payload: { id } };
+}
+
 export function fetchConferences() {
   return async (dispatch, getState) => {
     const method = 'GET';
@@ -62,7 +66,7 @@ export function patchConference(data) {
       const conference = await request(method, route, data);
       dispatch(receiveConference(conference));
     } catch (error) {
-      dispatch(failSetTimes(error));
+      dispatch(failPatchConference(error));
     }
   }
 }

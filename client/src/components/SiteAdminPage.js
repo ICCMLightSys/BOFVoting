@@ -29,6 +29,10 @@ class SiteAdminPage extends Component {
     this.props.dispatch(fetchConferences());
     this.props.dispatch(fetchSessions(this.props.conferenceId));
     this.props.dispatch(fetchVotes(this.props.conferenceId));
+    if(this.props.conference !== undefined) {
+      const { name, year, iccmEdition, maxVotes } = this.props.conference;
+      this.setState({ name, year, iccmEdition, maxVotes });
+    }
   }
 
   componentWillUpdate(nextProps) {
@@ -90,8 +94,8 @@ class SiteAdminPage extends Component {
 
           <Table.Body>
             {
-              this.props.rooms.map(room => (
-                <Table.Row>
+              this.props.rooms.map((room, i) => (
+                <Table.Row key={i}>
                   <Table.Cell textAlign="center">
                     <Form>
                       <Form.Field>
@@ -142,7 +146,7 @@ class SiteAdminPage extends Component {
           <Table.Body>
             {
               this.props.rounds.map((round, i) => (
-                <Table.Row>
+                <Table.Row key={i}>
                   <Table.Cell>
                     <Form>
                       <Form.Field>

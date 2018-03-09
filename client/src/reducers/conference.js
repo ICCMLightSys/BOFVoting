@@ -7,6 +7,9 @@ const defaultState = {
 
 export default function conference(state = defaultState, action) {
   switch(action.type) {
+    case actionTypes.SWITCH_CONFERENCE: {
+      return { ...state, conferenceId: action.payload.id };
+    }
     case actionTypes.RECEIVE_CONFERENCES: {
       return { ...state, conferences: action.payload.conferences };
     }
