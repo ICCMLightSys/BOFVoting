@@ -78,6 +78,16 @@ class SessionsStore extends Store {
     }
   }
 
+  // async findTopSessions(conferenceId) {
+  //   const sessions = this.findAll(conferenceId, false);
+  //
+  //   await Promise.all(sessions.map(this.addVotesAndFacilitators.bind(this)));
+  // }
+  //
+  // async addVoteListsAndFacilitatorsList(session) {
+  //   const yesVoteList = await this.database.stores.votes.
+  // }
+
   async findAllFacilitatedBy(userId) {
     return await this.database.query(
       `SELECT Sessions.* FROM Sessions INNER JOIN Facilitators ON Sessions.id = Facilitators.sessionId WHERE Facilitators.userId = ?`,
@@ -138,20 +148,6 @@ class SessionsStore extends Store {
     return this.database.query(
       'SELECT userId, sessionId FROM Facilitators WHERE sessionId = ?',
       [sessionId]
-    );
-  }
-
-  getYesVotes(sessionId) {
-    return this.database.query(
-      'SELECT userId, sessionId, voteType FROM Votes WHERE sessionId = ? AND voteType = ?',
-      [sessionId, 'Yes']
-    );
-  }
-
-  getAlternateVotes(sessionId) {
-    return this.database.query(
-      'SELECT userId, sessionId, voteType FROM Votes WHERE sessionId = ? AND voteType = ?',
-      [sessionId, 'Alt']
     );
   }
 }

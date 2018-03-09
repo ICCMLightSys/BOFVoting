@@ -1,6 +1,6 @@
 const Genetic = require('genetic-js');
 
-const generateSchedule = (conference, sessions, callback) => {
+const generateSchedule = (rooms, times, sessions, callback) => {
   const genetic = Genetic.create();
 
   genetic.seed = () => {
@@ -36,32 +36,33 @@ const generateSchedule = (conference, sessions, callback) => {
       return matrix;
     };
 
-    const slotMatrix = arrayToMatrix(array, conference.rounds.length, conference.rooms.length);
+    const slotMatrix = arrayToMatrix(array, times.length, rooms.length);
 
     let score = 0;
 
     for (let i = 0; i < slotMatrix.length; i++) {
-      const set = new Set();
+      const yesSet = new Set();
       const alternateSet = new Set();
       const facilitatorSet = new Set();
-      let count = 0;
+      let yesCount = 0;
       let alternateCount = 0;
       let facilitatorCount = 0;
       for (let j = 0; j < slotMatrix[i].length; j++) {
         const sessionIndex = slotMatrix[i][j];
-        const users = sessions[sessionIndex].yesVoteUserIds;
-        count += users.length;
-        users.forEach(user => set.add(user));
+        const yesUsers = sessions[sessionIndex].yesVoteUserIds;
+        yesCount = yesUsers.length;
+        yesUsers.forEach(user => yesSet.add(user));
         const altUsers = sessions[sessionIndex].altVoteUserIds;
-        alternateCount += altUsers.length;
+        alternateCount = altUsers.length;
         altUsers.forEach((user) => {
-          if (!set.has(alternateSet.add(user))) alternateSet.add(user);
+          if (yesSet.has(user)) alternateCount--;
+          else alternateSet.add(user);
         });
         const facilitatorUsers = sessions[sessionIndex].facilitatorUsersIds;
-        facilitatorCount += facilitatorUsers.length;
+        facilitatorCount = facilitatorUsers.length;
         facilitatorUsers.forEach(user => facilitatorSet.add(user));
       }
-      score += 100 * (facilitatorCount - facilitatorSet.size) + (count - set.size) + 0.25 * (alternateCount - alternateSet.size);
+      score += 100 * (facilitatorCount - facilitatorSet.size) + (yesCount - yesSet.size) + 0.25 * (alternateCount - alternateSet.size);
     }
 
     return score;

@@ -60,6 +60,20 @@ class VotesStore extends Store {
 
     return votes.filter(isPositiveVote);
   }
+
+  getYesVotes(sessionId) {
+    return this.database.query(
+      'SELECT userId, sessionId, voteType FROM Votes WHERE sessionId = ? AND voteType = ?',
+      [sessionId, 'Yes']
+    );
+  }
+
+  getAlternateVotes(sessionId) {
+    return this.database.query(
+      'SELECT userId, sessionId, voteType FROM Votes WHERE sessionId = ? AND voteType = ?',
+      [sessionId, 'Alt']
+    );
+  }
 }
 
 function isPositiveVote(vote) {
