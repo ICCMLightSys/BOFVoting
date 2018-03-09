@@ -50,6 +50,20 @@ class Database {
     return this.query(queryString, queryValues).then(results => results[0]);
   }
 
+  async runTransaction(callback) {
+    await this.query('START TRANSACTION');
+
+    try {
+      await Promise.resolve(callback());
+    } catch (e) {
+      await this.query('ROLLBACK');
+
+      throw e;
+    }
+
+    await this.query('COMMIT');
+  }
+
   setStores(stores) {
     this.stores = stores;
   }

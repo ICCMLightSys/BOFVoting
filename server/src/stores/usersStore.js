@@ -117,6 +117,15 @@ class UsersStore extends Store {
     return result[0].userCount >= 1;
   }
 
+  async isFacilitating(userId, sessionId) {
+    const result = await this.database.queryOne(
+      'SELECT COUNT(*) AS rowCount FROM Facilitators WHERE userId = ? AND sessionId = ?',
+      [userId, sessionId]
+    );
+
+    return result.rowCount >= 1;
+  }
+
   async hasAccessTo(userId, conferenceId) {
     const result = await this.database.query(
       'SELECT COUNT(*) as rowCount FROM Permissions WHERE userId = ? AND conferenceId = ?',

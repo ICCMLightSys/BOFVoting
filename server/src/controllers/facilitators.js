@@ -27,10 +27,17 @@ router.post('/conferences/:conferenceId/sessions/:sessionId/facilitate', require
     userId = req.params.userId;
   }
 
+  const { sessionId } = req.params;
+
   if (req.body.facilitate) {
-    await req.sessions.addFacilitator(req.params.sessionId, userId);
+    await req.db.runTransaction(() =>
+      Promise.all([
+        req.sessions.addFacilitator(sessionId, userId),
+        req.votes.updateVote(userId, sessionId, 'Yes'),
+      ])
+    );
   } else {
-    await req.sessions.removeFacilitator(req.params.sessionId, userId);
+    await req.sessions.removeFacilitator(sessionId, userId);
   }
 
   res.status(201).send({ userId, facilitate: req.body.facilitate });

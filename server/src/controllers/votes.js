@@ -1,11 +1,14 @@
 const express = require('express');
+const HttpResponseError = require('../httpResponseError');
 const { ensureUserHasAccessToConference } = require('../middleware/validation');
 const requireAuthentication = require('../middleware/authentication');
 
 const router = express.Router();
 
 router.post('/conferences/:conferenceId/sessions/:sessionId/votes', requireAuthentication, ensureUserHasAccessToConference, async (req, res) => {
-  // TODO: validate vote type here or in model
+  if (await req.users.isFacilitating(req.authentication.userId, req.params.sessionId)) {
+    throw new HttpResponseError('FORBIDDEN', "A facilitator can't change their vote");
+  }
 
   await req.votes.setVote(req.authentication.userId, req.params.sessionId, req.body.voteType);
   res.status(201).send({ voteType: req.body.voteType });
