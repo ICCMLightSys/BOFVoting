@@ -5,7 +5,7 @@ import { setTimes } from '../actions/conference';
 import { fetchSessions, updateSession, deleteSession } from '../actions/session';
 import { fetchVotes } from '../actions/vote';
 import AddSession from './AddSession';
-import { fetchFacilitators } from '../actions/facilitate';
+import { fetchFacilitators, setFacilitateAdmin } from '../actions/facilitate';
 import { fetchUsers } from '../actions/user';
 
 class ConferenceAdminPage extends Component {
@@ -32,7 +32,7 @@ class ConferenceAdminPage extends Component {
     const votingEndTime = new Date(this.votingEndTime.value + ` ${this.state.timeZoneStringOffset}`);
     if (isNaN(nominationStartTime.getTime()) || isNaN(nominationEndTime.getTime()) ||
       isNaN(votingStartTime.getTime()) || isNaN(votingEndTime.getTime())) {
-      console.log('invalid date');
+      console.log('invalid date'); // TODO display error
     } else {
       this.props.dispatch(setTimes(nominationStartTime, nominationEndTime, votingStartTime, votingEndTime));
     }
@@ -99,7 +99,7 @@ class ConferenceAdminPage extends Component {
                         />
                         <Form.Button color="green" icon
                           onClick={() => {
-                            console.log(this.state[`facilitatorsDropdown_${id}`]);
+                            this.props.dispatch(setFacilitateAdmin(id, this.state[`facilitatorsDropdown_${id}`], true));
                           }}>
                           <Icon name='plus' />&nbsp;&nbsp;Add Facilitator
                         </Form.Button>

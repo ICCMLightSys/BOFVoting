@@ -1,6 +1,6 @@
 import * as actionTypes from '../constants/actionTypes';
 
-export default function vote(state = { facilitate: [] }, action) {
+export default function vote(state = { facilitate: [], facilitators: [] }, action) {
   switch(action.type) {
     case actionTypes.RECEIVE_FACILITATE: {
       const { sessionId, facilitate } = action.payload;
@@ -19,6 +19,9 @@ export default function vote(state = { facilitate: [] }, action) {
     }
     case actionTypes.RECEIVE_FACILITATORS: {
       return { ...state, facilitators: action.payload.facilitators };
+    }
+    case actionTypes.RECEIVE_FACILITATE_ADMIN: {
+      // TODO write this case
     }
     default: {
       return state;

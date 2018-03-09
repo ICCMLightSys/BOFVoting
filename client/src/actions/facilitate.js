@@ -70,3 +70,27 @@ const receiveFacilitators = (facilitators) => {
 export const failFetchFacilitators = (error) => {
   return { type: actionTypes.FAIL_FETCH_FACILITATORS, payload: { error } };
 };
+
+export const setFacilitateAdmin = (sessionId, userId, facilitate) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const conferenceId = state.conference.conferenceId;
+    const method = 'POST';
+    const route = `/conferences/${conferenceId}/sessions/${sessionId}/facilitate`;
+    const data = { userId, facilitate };
+    try {
+      const response = await request(method, route, data);
+      dispatch(receiveFacilitateAdmin({ ...response, sessionId }));
+    } catch (error) {
+      dispatch(failSetFacilitateAdmin(error));
+    }
+  }
+};
+
+export const receiveFacilitateAdmin = ({ sessionId, userId, facilitate }) => {
+  return { type: actionTypes.RECEIVE_FACILITATE_ADMIN, payload: { sessionId, userId, facilitate } };
+};
+
+export const failSetFacilitateAdmin = (error) => {
+  return { type: actionTypes.FAIL_SET_FACILITATE_ADMIN, payload: { error } };
+};
