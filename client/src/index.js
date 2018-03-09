@@ -14,7 +14,6 @@ import SessionsPage from './components/SessionsPage';
 import ConferenceAdminPage from './components/ConferenceAdminPage';
 import SiteAdminPage from './components/SiteAdminPage';
 import SchedulePage from './components/SchedulePage';
-import { setJwtToken } from './actions/request';
 import api from './middleware/api';
 
 import './polyfill';

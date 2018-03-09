@@ -1,13 +1,11 @@
 import * as actionTypes from '../constants/actionTypes';
 
-const defaultState = {
-  //defaultState?
-};
+const defaultState = [];
 
 export default function room(state = defaultState, action) {
   switch(action.type) {
     case actionTypes.RECEIVE_ROOMS: {
-      return { ...state, rooms: action.payload };
+      return action.payload;
     }
     default: {
       return state;

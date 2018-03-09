@@ -18,5 +18,5 @@ export const failFetchRooms = (error) => {
 };
 
 const receiveRooms = (rooms) => {
-  return { type: actionTypes.RECEIVE_ROOMS, payload: { rooms } };
+  return { type: actionTypes.RECEIVE_ROOMS, payload: rooms };
 };

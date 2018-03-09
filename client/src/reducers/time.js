@@ -1,13 +1,11 @@
 import * as actionTypes from '../constants/actionTypes';
 
-const defaultState = {
-  //defaultState?
-};
+const defaultState = [];
 
 export default function time(state = defaultState, action) {
   switch(action.type) {
     case actionTypes.RECEIVE_TIMES: {
-      return { ...state, times: action.payload };
+      return action.payload;
     }
     default: {
       return state;

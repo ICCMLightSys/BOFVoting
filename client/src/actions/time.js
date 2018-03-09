@@ -18,5 +18,5 @@ export const failFetchTimes = (error) => {
 };
 
 const receiveTimes = (times) => {
-  return { type: actionTypes.RECEIVE_TIMES, payload: { times } };
+  return { type: actionTypes.RECEIVE_TIMES, payload: times };
 };

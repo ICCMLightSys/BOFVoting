@@ -22,5 +22,5 @@ export const failFetchSlots = (error) => {
 };
 
 const receiveSlots = (slots) => {
-  return { type: actionTypes.RECEIVE_SLOTS, payload: { slots } };
+  return { type: actionTypes.RECEIVE_SLOTS, payload: slots };
 };
