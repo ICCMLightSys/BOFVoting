@@ -9,7 +9,7 @@ function validateConference(conferenceData) {
     throw new ValidationError('Data for conference not found');
   }
 
-  const { name, maxVotes, isArchived } = conferenceData;
+  const { name, maxVotes, year, isArchived } = conferenceData;
 
   if (typeof name !== 'string' || name.length === 0) {
     throw new ValidationError('Conferences must have a name');
@@ -17,6 +17,10 @@ function validateConference(conferenceData) {
 
   if (typeof maxVotes !== 'number') {
     throw new ValidationError('maxVotes must be a number');
+  }
+
+  if (typeof year !== 'number') {
+    throw new ValidationError('year must be a number');
   }
 
   if (!(isArchived == '0' || isArchived == '1')) {
@@ -69,13 +73,14 @@ class ConferencesStore extends Store {
 
     const result = await this.database.query(`
       INSERT INTO Conferences (
-        name, maxVotes, isArchived, invitationCode, submissionStart, submissionEnd, votingStart, votingEnd
+        name, maxVotes, isArchived, invitationCode, year, submissionStart, submissionEnd, votingStart, votingEnd
       ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       conferenceData.name,
       conferenceData.maxVotes,
       conferenceData.isArchived,
       invitationCode,
+      conferenceData.year,
       conferenceData.submissionStart,
       conferenceData.submissionEnd,
       conferenceData.votingStart,
