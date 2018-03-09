@@ -1,5 +1,5 @@
 const express = require('express');
-const { HttpResponseError } = require('../httpResponseError');
+const HttpResponseError = require('../httpResponseError');
 const { ensureUserHasAccessToConference, requireUserToBeAdmin } = require('../middleware/validation');
 const requireAuthentication = require('../middleware/authentication');
 
