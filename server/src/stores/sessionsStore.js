@@ -112,8 +112,8 @@ class SessionsStore extends Store {
     validateSession(session);
 
     const result = await this.database.query(
-      'INSERT INTO Sessions (name, description, conferenceId) VALUES (?, ?, ?)'
-      , [session.name, session.description, conferenceId]
+      'INSERT INTO Sessions (name, description, conferenceId, forced) VALUES (?, ?, ?, ?)'
+      , [session.name, session.description, conferenceId, 0]
     );
 
     return result.insertId;
