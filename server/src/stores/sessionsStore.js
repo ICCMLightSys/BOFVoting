@@ -124,7 +124,6 @@ class SessionsStore extends Store {
 
   async addVotesAndFacilitators(session) {
     const votes = await this.database.stores.votes.findForSession(session.id);
-    console.log(`Votes: ${JSON.stringify(votes)}`);
 
     const yesVotes = votes.filter(({ voteType }) => voteType === 'Yes').length;
     const altVotes = votes.filter(({ voteType }) => voteType === 'Alt').length;

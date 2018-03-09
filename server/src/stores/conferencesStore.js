@@ -74,7 +74,7 @@ class ConferencesStore extends Store {
     const result = await this.database.query(`
       INSERT INTO Conferences (
         name, maxVotes, isArchived, invitationCode, year, submissionStart, submissionEnd, votingStart, votingEnd
-      ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       conferenceData.name,
       conferenceData.maxVotes,

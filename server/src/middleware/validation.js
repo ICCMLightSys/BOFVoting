@@ -47,7 +47,6 @@ async function validateExistenceOfParameterResources(req, res, next) {
   }
 
   if (req.params.sessionId != null) {
-    console.log('checking sessions');
     if (!await req.sessions.exists(req.params.sessionId)) {
       next(new HttpResponseError('NOT_FOUND', 'Session not found'));
       return;

@@ -60,3 +60,7 @@ body {
 
 
 }
+
+.ui.modal.login {
+  margin: auto!important;
+}

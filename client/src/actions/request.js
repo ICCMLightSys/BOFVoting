@@ -1,20 +1,19 @@
 import configuration from '../configuration';
 
 const baseApiUrl = configuration.baseApiUrl;
-let jwtToken;
-
-export const setJwtToken = (token) => {
-  jwtToken = token;
-};
 
 export const request = (method, route, data = null) => {
   const requestConfiguration = {
     method,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `jwt ${jwtToken}`,
     },
   };
+
+  const token = window.localStorage.getItem('jwtToken');
+  if (token != null) {
+    requestConfiguration.headers['Authorization'] = `jwt ${token}`;
+  }
 
   if (data != null) {
     requestConfiguration.body = JSON.stringify(data);
@@ -23,13 +22,12 @@ export const request = (method, route, data = null) => {
   return new Promise((resolve, reject) => {
     fetch(`${baseApiUrl}${route}`, requestConfiguration)
       .then((response) => {
-        if (!response.ok) {
+        if (response.status === 404) {
           reject(new Error(response.statusText));
           return;
         }
 
         if (response.status < 200 || (response.status >= 300 && response.status !== 304)) {
-        // if (!response.status.toString().startsWith('2')) {
           response.json().then(json => reject(new Error(json.error)));
           return;
         }
@@ -39,6 +37,7 @@ export const request = (method, route, data = null) => {
         } else {
           resolve();
         }
-      });
+      })
+      .catch(() => reject(new Error('Failed to connect to server')));
   });
 };

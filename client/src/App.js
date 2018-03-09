@@ -1,18 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import { logout } from './actions/user';
 
 class App extends Component {
   render() {
     return (
       <div>
         <p>Conference ID: {this.props.conferenceId}</p>
-        <p>User ID: {this.props.id}</p>
+        <p>User Token: {this.props.jwtToken}</p>
         <NavLink to="/sessions">Sessions</NavLink>
         <br />
         <NavLink to="/conferenceadmin">Conference Admin</NavLink>
         <br />
         <NavLink to="/siteadmin">Site Admin</NavLink>
+        <br />
+        <a onClick={() => this.props.dispatch(logout())}>Log out</a>
       </div>
     );
   }
@@ -21,6 +24,6 @@ class App extends Component {
 export default connect(
   state => ({
     conferenceId: state.conference.conferenceId,
-    id: state.user.id,
+    jwtToken: state.user.jwtToken,
   })
 )(App);
