@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Checkbox, Dropdown, Form, Table } from 'semantic-ui-react';
+import { Dropdown, Form, Table } from 'semantic-ui-react';
+import { fetchConferences, patchConference } from '../actions/conference';
 import { fetchSessions } from '../actions/session';
 import { fetchVotes } from '../actions/vote';
 
@@ -8,15 +9,22 @@ class SiteAdminPage extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      name: '',
+      year: 0,
+      iccmEdition: '',
+      maxVotes: 0,
+    };
+
     this.handleEditConferenceSubmit = this.handleEditConferenceSubmit.bind(this);
     this.handleEditRoomsSubmit = this.handleEditRoomsSubmit.bind(this);
     this.handleEditRoundsSubmit = this.handleEditRoundsSubmit.bind(this);
   }
 
-  handleEditConferenceSubmit(e, data) {
-    // const session = { name: this.nameField.value, description: this.descriptionField.value };
-    // this.props.dispatch(addSession(session));
-    alert('TODO update conference');
+  handleEditConferenceSubmit() {
+    const { name, year, iccmEdition, maxVotes } = this.state;
+    const data = { name, year, iccmEdition, maxVotes };
+    this.props.dispatch(patchConference(data));
   }
 
   handleEditRoomsSubmit(e, data) {
@@ -32,8 +40,16 @@ class SiteAdminPage extends Component {
   }
 
   componentDidMount() {
+    this.props.dispatch(fetchConferences());
     this.props.dispatch(fetchSessions(this.props.conferenceId));
     this.props.dispatch(fetchVotes(this.props.conferenceId));
+  }
+
+  componentWillUpdate(nextProps) {
+    if(nextProps.conference !== undefined && this.props.conference === undefined) {
+      const { name, year, iccmEdition, maxVotes } = nextProps.conference;
+      this.setState({ name, year, iccmEdition, maxVotes });
+    }
   }
 
   render() {
@@ -43,11 +59,13 @@ class SiteAdminPage extends Component {
         <Form>
           <Form.Field>
             <label>Name</label>
-            <input ref={nameField => this.nameField = nameField} placeholder="Name" />
+            <input ref={nameField => this.nameField = nameField} placeholder="Name" value={this.state.name}
+              onChange={e => this.setState({ name: e.target.value })} />
           </Form.Field>
           <Form.Field>
             <label>Year</label>
-            <input type="number" ref={yearField => this.yearField = yearField} placeholder="Year" />
+            <input type="number" ref={yearField => this.yearField = yearField} placeholder="Year" value={this.state.year}
+               onChange={e => this.setState({ year: e.target.value })} />
           </Form.Field>
           <Form.Field>
             <label>ICCM Edition</label>
@@ -58,41 +76,19 @@ class SiteAdminPage extends Component {
               placeholder="ICCM Edition"
               options={
                 [
-                  { key: 'europe', value: 'europe', text: 'Europe' },
-                  { key: 'usa', value: 'usa', text: 'USA' },
-                  { key: 'africa', value: 'africa', text: 'Africa' },
+                  { key: 'eu', value: 'eu', text: 'Europe' },
+                  { key: 'us', value: 'us', text: 'USA' },
+                  { key: 'af', value: 'af', text: 'Africa' },
                 ]
-              }/>
+              }
+              value={this.state.iccmEdition}
+              onChange={(e, data) => this.setState({ iccmEdition: data.value })} />
           </Form.Field>
           <Form.Field>
             <label>Max Votes</label>
-            <input type="number" ref={maxVotesField => this.maxVotesField = maxVotesField} placeholder="Max Votes" />
-          </Form.Field>
-          <Form.Field>
-            <label>Force BOF</label>
-            <Checkbox ref={forceField => this.forceField = forceField} />
-          </Form.Field>
-          <Form.Field>
-            <label>BOF Location</label>
-            <Dropdown
-              fluid
-              selection
-              ref={locationField => this.locationField = locationField}
-              placeholder="BOF Location"
-              options={this.props.rooms.map(rooms => ({ key: rooms, value: rooms, text: rooms }))} />
-          </Form.Field>
-          <Form.Field>
-            <label>BOF Round</label>
-            <Dropdown
-              fluid
-              selection
-              ref={roundField => this.roundField = roundField}
-              placeholder="BOF Round"
-              options={this.props.rounds.map(round => ({ key: round, value: round, text: round }))} />
-          </Form.Field>
-          <Form.Field>
-            <label>BOF Title</label>
-            <input ref={titleField => this.titleField = titleField} placeholder="BOF Title" />
+            <input type="number" ref={maxVotesField => this.maxVotesField = maxVotesField} placeholder="Max Votes"
+              value={this.state.maxVotes}
+              onChange={e => this.setState({ maxVotes: e.target.value })} />
           </Form.Field>
           <Form.Button color="green" type="submit" onClick={this.handleEditConferenceSubmit}>Submit</Form.Button>
         </Form>
@@ -189,6 +185,8 @@ class SiteAdminPage extends Component {
 
 export default connect(
   state => ({
+    conference: state.conference.conferences.find(conference => conference.id === state.conference.conferenceId),
+    conferenceId: state.conference.conferenceId,
     rooms: ['Room 1', 'Room 2', 'Room 3', 'Room 4', 'Room 5'],
     rounds: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5'],
 
