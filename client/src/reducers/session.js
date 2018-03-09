@@ -18,6 +18,15 @@ export default function session(state = { sessions: [] }, action) {
       sessions.splice(sessions.findIndex(session => session.id === action.payload.id), 1);
       return { ...state, sessions };
     }
+    case actionTypes.RECEIVE_MERGED_SESSION: {
+      const { session, sourceSessionId } = action.payload;
+      const destinationSessionId = session.id;
+      const sessions = [...state.sessions];
+      sessions.splice(sessions.findIndex(session => session.id === sourceSessionId), 1);
+      const indexToReplace = sessions.findIndex(session => session.id === destinationSessionId);
+      sessions[indexToReplace] = session;
+      return { ...state, sessions };
+    }
     default: {
       return state;
     }

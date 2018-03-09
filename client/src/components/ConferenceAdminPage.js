@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Dropdown, Form, Icon, Table } from 'semantic-ui-react';
 import { setTimes } from '../actions/conference';
-import { fetchSessions, updateSession, deleteSession } from '../actions/session';
+import { fetchSessions, updateSession, deleteSession, mergeSessions } from '../actions/session';
 import { fetchVotes } from '../actions/vote';
 import AddSession from './AddSession';
 import { fetchFacilitators, setFacilitateAdmin } from '../actions/facilitate';
@@ -36,6 +36,17 @@ class ConferenceAdminPage extends Component {
     } else {
       this.props.dispatch(setTimes(nominationStartTime, nominationEndTime, votingStartTime, votingEndTime));
     }
+  }
+
+  componentDidUpdate() {
+    this.props.sessions.forEach(({ id, name, description }) => {
+      if(this.nameFields[id].value !== name) {
+        this.nameFields[id].value = name;
+      }
+      if(this.descriptionFields[id].value !== description) {
+        this.descriptionFields[id].value = description;
+      }
+    });
   }
 
   componentDidMount() {
@@ -90,18 +101,34 @@ class ConferenceAdminPage extends Component {
                             }
                           }} />
                       </Form.Field>
-                      <div className="facilitators-container">
-                        <Dropdown className="facilitators-dropdown" placeholder="Select a user" fluid selection
+                      <div className="facilitators-and-merging-container">
+                        <Dropdown className="facilitators-and-merging-dropdown" placeholder="Select a user" fluid selection
                           onChange={(e, data) => this.setState({ [`facilitatorsDropdown_${id}`]: data.value })}
                           options={
                             this.props.users.map(user => ({ key: user.id, value: user.id, text: user.username }))
                           }
                         />
                         <Form.Button color="green" icon
-                          onClick={() => {
-                            this.props.dispatch(setFacilitateAdmin(id, this.state[`facilitatorsDropdown_${id}`], true));
-                          }}>
+                           onClick={() => {
+                             this.props.dispatch(setFacilitateAdmin(id, this.state[`facilitatorsDropdown_${id}`], true));
+                           }}>
                           <Icon name='plus' />&nbsp;&nbsp;Add Facilitator
+                        </Form.Button>
+                      </div>
+                      <div className="facilitators-and-merging-container">
+                        <Dropdown className="facilitators-and-merging-dropdown" placeholder="Select another session" fluid selection
+                          onChange={(e, data) => this.setState({ [`sessionsDropdown_${id}`]: data.value })}
+                          options={
+                            this.props.sessions
+                              .filter(session => session.id !== id)
+                              .map(session => ({ key: session.id, value: session.id, text: session.name }))
+                          }
+                        />
+                        <Form.Button color="green" icon
+                           onClick={() => {
+                             this.props.dispatch(mergeSessions(id, this.state[`sessionsDropdown_${id}`]));
+                           }}>
+                          <Icon name='refresh' />&nbsp;&nbsp;Merge
                         </Form.Button>
                       </div>
                     </Form>

@@ -27,6 +27,7 @@ export default function vote(state = { facilitate: [], facilitators: [] }, actio
       //   const newSessionData = { ...sessionData, facilitators: [...sessionData.facilitators] };
       //   newSessionData.splice()
       // }
+      return state;
     }
     default: {
       return state;

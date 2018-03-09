@@ -15,14 +15,18 @@ body {
   width: 100%;
 }
 
-.facilitators-container {
+.facilitators-and-merging-container {
   display: flex;
   width: 100%;
 }
 
-.facilitators-dropdown {
+.facilitators-and-merging-dropdown {
   flex: 1;
   margin-right: 10px;
+}
+
+.facilitators-and-merging-dropdown:not(:last-child) {
+  margin-bottom: 10px;
 }
 
 .facilitate-label {

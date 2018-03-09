@@ -92,3 +92,27 @@ export const receiveDeletedSession = (id) => {
 export const failDeleteSession = (error) => {
   return { type: actionTypes.FAIL_DELETE_SESSION, payload: { error } };
 };
+
+export function mergeSessions(destinationSessionId, sourceSessionId) {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const conferenceId = state.conference.conferenceId;
+    const method = 'POST';
+    const route = `/conferences/${conferenceId}/sessions/merge`;
+    const data = { destinationSessionId, sourceSessionId };
+    try {
+      const response = await request(method, route, data);
+      dispatch(receiveMergedSession(response, sourceSessionId));
+    } catch (error) {
+      dispatch(failMergeSessions(error));
+    }
+  }
+}
+
+export const receiveMergedSession = (session, sourceSessionId) => {
+  return { type: actionTypes.RECEIVE_MERGED_SESSION, payload: { session, sourceSessionId } };
+};
+
+export const failMergeSessions = (error) => {
+  return { type: actionTypes.FAIL_MERGE_SESSION, payload: { error } };
+};
