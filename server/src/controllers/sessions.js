@@ -17,6 +17,14 @@ router.post('/conferences/:conferenceId/sessions', requireAuthentication, ensure
   res.status(201).send(newSession);
 });
 
+router.post('/conferences/:conferenceId/sessions/merge', requireAuthentication, ensureUserHasAccessToConference, requireUserToBeAdmin, async (req, res) => {
+  const { sourceSessionId, destinationSessionId } = req.body;
+  await req.sessions.merge(sourceSessionId, destinationSessionId);
+
+  const mergedSession = await req.sessions.find(destinationSessionId, true);
+  res.status(200).send(mergedSession);
+});
+
 router.patch('/conferences/:conferenceId/sessions/:sessionId', requireAuthentication, ensureUserHasAccessToConference, requireUserToBeAdmin, async (req, res) => {
   await req.sessions.update(req.params.sessionId, req.body);
 

@@ -1,4 +1,5 @@
 const Store = require('./store.js');
+const HttpResponseError = require('../httpResponseError');
 const { ValidationError } = require('./errors');
 
 function validateSession(sessionData) {
@@ -23,7 +24,7 @@ class SessionsStore extends Store {
 
   async find(sessionId, includeVotesAndFacilitators = true) {
     const session = await this.database.queryOne(
-      'SELECT id, name, description FROM Sessions WHERE id = ?',
+      'SELECT id, name, description, conferenceId FROM Sessions WHERE id = ?',
       [sessionId]
     );
 
@@ -154,6 +155,57 @@ class SessionsStore extends Store {
 
   async delete(sessionId) {
     await this.database.query('DELETE FROM Sessions WHERE id = ?', [sessionId]);
+  }
+
+  async merge(sourceSessionId, destinationSessionId) {
+    const sourceSession = await this.find(sourceSessionId, true);
+    const destinationSession = await this.find(destinationSessionId, true);
+
+    if (sourceSession == null || destinationSession == null) {
+      throw new HttpResponseError('NOT_FOUND', 'Session not found');
+    }
+
+    try {
+      await this.database.query('START TRANSACTION');
+
+      const newSessionData = {
+        name: `${destinationSession.name} / ${sourceSession.name}`,
+        description: `${destinationSession.description} / ${sourceSession.description}`,
+      };
+
+      await this.update(destinationSessionId, newSessionData);
+
+      await this.database.query('UPDATE IGNORE Facilitators SET sessionId = ? WHERE sessionId = ?', [destinationSessionId, sourceSessionId]);
+
+      // Ensure that for every vote for sourceSession there is a corresponding vote for the
+      //   destination session, in order to prevent the next update query from breaking.
+      await this.database.query(`
+        INSERT INTO Votes (userId, sessionId, voteType)
+        SELECT SourceVotes.userId, ?, SourceVotes.voteType
+          FROM Votes AS SourceVotes
+          WHERE SourceVotes.sessionId = ?
+          AND (SELECT COUNT(*) FROM Votes AS DestinationVotes WHERE sessionId = ? AND userId = SourceVotes.userId) = 0
+      `, [destinationSessionId, sourceSessionId, destinationSessionId]);
+
+      // When two sessions have different votes by the same user, go with the highest vote value.
+      await this.database.query(`
+        UPDATE Votes AS DestinationVotes
+        LEFT JOIN Votes AS SourceVotes ON SourceVotes.userId = DestinationVotes.userId
+        SET DestinationVotes.voteType =
+          IF(SourceVotes.voteType = 'Yes' OR DestinationVotes.voteType = 'Yes', 'Yes',
+          IF(SourceVotes.voteType = 'Alt' OR DestinationVotes.voteType = 'Alt', 'Alt',
+          'No'))
+        WHERE SourceVotes.sessionId = ? AND DestinationVotes.sessionId = ?
+      `, [sourceSessionId, destinationSessionId]);
+
+      await this.delete(sourceSessionId);
+    } catch (e) {
+      await this.database.query('ROLLBACK');
+
+      throw e;
+    }
+
+    await this.database.query('COMMIT');
   }
 
   async addFacilitator(sessionId, userId) {

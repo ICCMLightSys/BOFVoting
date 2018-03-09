@@ -39,6 +39,13 @@ class VotesStore extends Store {
     );
   }
 
+  async find(sessionId, userId) {
+    return this.database.queryOne(
+      'SELECT voteType FROM Votes WHERE sessionId = ? AND userId = ?',
+      [sessionId, userId]
+    );
+  }
+
   async findForUserAndConference(userId, conferenceId) {
     const votes = await this.database.query(`
       SELECT Votes.voteType, Sessions.id AS sessionId
