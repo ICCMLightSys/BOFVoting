@@ -41,11 +41,15 @@ class ConferenceAdminPage extends Component {
   componentDidUpdate() {
     this.props.sessions.forEach(({ id, name, description }) => {
       if (!this.props.sessionsUpdating.includes(id) && !this.state.editedSessions.includes(id)) {
-        if (this.nameFields[id].value !== name) {
-          this.nameFields[id].value = name;
+        if (this.nameFields[id]) {
+          if (this.nameFields[id].value !== name) {
+            this.nameFields[id].value = name;
+          }
         }
-        if (this.descriptionFields[id].value !== description) {
-          this.descriptionFields[id].value = description;
+        if (this.descriptionFields[id]) {
+          if (this.descriptionFields[id].value !== description) {
+            this.descriptionFields[id].value = description;
+          }
         }
       }
     });

@@ -10,6 +10,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 
 import App from './App';
+import Navbar from './components/Navbar';
 import SessionsPage from './components/SessionsPage';
 import ConferenceAdminPage from './components/ConferenceAdminPage';
 import SiteAdminPage from './components/SiteAdminPage';
@@ -35,11 +36,14 @@ ReactDOM.render(
   <Provider store={store}>
     <LoginRequired>
       <Router>
-        <div className="container">
-          <Route exact path="/" component={App} />
-          <Route path="/sessions" component={SessionsPage} />
-          <Route path="/conferenceadmin" component={ConferenceAdminPage} />
-          <Route path="/siteadmin" component={SiteAdminPage} />
+        <div>
+          <Navbar />
+          <div className="container">
+            <Route exact path="/" component={App} />
+            <Route path="/sessions" component={SessionsPage} />
+            <Route path="/conferenceadmin" component={ConferenceAdminPage} />
+            <Route path="/siteadmin" component={SiteAdminPage} />
+          </div>
         </div>
       </Router>
     </LoginRequired>
