@@ -29,6 +29,7 @@ export const fetchSessions = (conferenceId) => {
   return async (dispatch) => {
     const method = 'GET';
     const route = `/conferences/${conferenceId}/sessions`;
+    dispatch(startFetchingSessions());
     try {
       const response = await request(method, route);
       dispatch(receiveSessions(response));
@@ -36,6 +37,10 @@ export const fetchSessions = (conferenceId) => {
       dispatch(failFetchSessions(error));
     }
   }
+};
+
+const startFetchingSessions = () => {
+  return { type: actionTypes.START_FETCHING_SESSIONS };
 };
 
 export const failFetchSessions = (error) => {

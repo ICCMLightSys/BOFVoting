@@ -61,84 +61,90 @@ class SessionsPage extends Component {
     const facilitateError = id => this.props.facilitateStatus[id] !== undefined && this.props.facilitateStatus[id].error !== null;
     return (
       <div className="sessions-page">
-        <Table celled padded>
-          <Table.Header>
-            <Table.Row textAlign="center">
-              <Table.HeaderCell singleLine>BOF sessions</Table.HeaderCell>
-              <Table.HeaderCell>Participate?</Table.HeaderCell>
-              <Table.HeaderCell>Facilitate?</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-            {
-              this.props.sessions.sort((a, b) => {
-                return this.state.sortOrder.indexOf(a.id) - this.state.sortOrder.indexOf(b.id);
-              }).map(({ id, name, votes, facilitators, description }) =>
-                <Table.Row key={id}>
-                  <Table.Cell>
-                    <Header as="h4">
-                      {
-                        `${name} (${votes} vote${votes === 1 ? '' : 's'}, ` +
-                        `${facilitators} facilitator${facilitators === 1 ? '' : 's'})`
-                      }
-                    </Header>
-                    <div>
-                    {description}
-                    { voteError(id) ? <br /> : '' }
-                    { voteError(id) ? 'Error updating votes. Please try again.' : '' }
-                    { facilitateError(id) ? <br /> : '' }
-                    { facilitateError(id) ? 'Error updating facilitation status. Please try again.' : '' }
-                    </div>
-                  </Table.Cell>
-                  <Table.Cell singleLine>
-                    <Form>
-                      <Form.Field>
-                        <Radio
-                          label="Yes"
-                          name="votingGroup"
-                          value="yes"
-                          checked={this.props.votes[id] === voteTypes.YES}
-                          onChange={() => this.props.dispatch(setVote(id, voteTypes.YES))}
-                          disabled={this.props.facilitate[id] === true}
-                        />
-                      </Form.Field>
-                      <Form.Field>
-                        <Radio
-                          label="Alt"
-                          name="votingGroup"
-                          value="alt"
-                          checked={this.props.votes[id] === voteTypes.ALT}
-                          onChange={() => this.props.dispatch(setVote(id, voteTypes.ALT))}
-                          disabled={this.props.facilitate[id] === true}
-                        />
-                      </Form.Field>
-                      <Form.Field>
-                        <Radio
-                          label="No"
-                          name="votingGroup"
-                          value="no"
-                          checked={this.props.votes[id] === voteTypes.NO || this.props.votes[id] === undefined}
-                          onChange={() => this.props.dispatch(setVote(id, voteTypes.NO))}
-                          disabled={this.props.facilitate[id] === true}
-                        />
-                      </Form.Field>
-                    </Form>
-                  </Table.Cell>
-                  <Table.Cell textAlign="center">
-                    <Checkbox checked={this.props.facilitate[id] === true} onChange={(e, data) => {
-                      this.props.dispatch(setFacilitate(id, data.checked));
-                      if(data.checked) {
-                        this.props.dispatch(setVote(id, voteTypes.YES));
-                      }
-                    }} />
-                    <label className="facilitate-label">Facilitate</label>
-                  </Table.Cell>
+        {
+          this.props.fetchingSessions ? (
+            <h2>Loading sessions...</h2>
+          ) : (
+            <Table celled padded>
+              <Table.Header>
+                <Table.Row textAlign="center">
+                  <Table.HeaderCell singleLine>BOF sessions</Table.HeaderCell>
+                  <Table.HeaderCell>Participate?</Table.HeaderCell>
+                  <Table.HeaderCell>Facilitate?</Table.HeaderCell>
                 </Table.Row>
-              )
-            }
-          </Table.Body>
-        </Table>
+              </Table.Header>
+
+              <Table.Body>
+                {
+                  this.props.sessions.sort((a, b) => {
+                    return this.state.sortOrder.indexOf(a.id) - this.state.sortOrder.indexOf(b.id);
+                  }).map(({id, name, votes, facilitators, description}) =>
+                    <Table.Row key={id}>
+                      <Table.Cell>
+                        <Header as="h4">
+                          {
+                            `${name} (${votes} vote${votes === 1 ? '' : 's'}, ` +
+                            `${facilitators} facilitator${facilitators === 1 ? '' : 's'})`
+                          }
+                        </Header>
+                        <div>
+                          {description}
+                          {voteError(id) ? <br/> : ''}
+                          {voteError(id) ? 'Error updating votes. Please try again.' : ''}
+                          {facilitateError(id) ? <br/> : ''}
+                          {facilitateError(id) ? 'Error updating facilitation status. Please try again.' : ''}
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell singleLine>
+                        <Form>
+                          <Form.Field>
+                            <Radio
+                              label="Yes"
+                              name="votingGroup"
+                              value="yes"
+                              checked={this.props.votes[id] === voteTypes.YES}
+                              onChange={() => this.props.dispatch(setVote(id, voteTypes.YES))}
+                              disabled={this.props.facilitate[id] === true}
+                            />
+                          </Form.Field>
+                          <Form.Field>
+                            <Radio
+                              label="Alt"
+                              name="votingGroup"
+                              value="alt"
+                              checked={this.props.votes[id] === voteTypes.ALT}
+                              onChange={() => this.props.dispatch(setVote(id, voteTypes.ALT))}
+                              disabled={this.props.facilitate[id] === true}
+                            />
+                          </Form.Field>
+                          <Form.Field>
+                            <Radio
+                              label="No"
+                              name="votingGroup"
+                              value="no"
+                              checked={this.props.votes[id] === voteTypes.NO || this.props.votes[id] === undefined}
+                              onChange={() => this.props.dispatch(setVote(id, voteTypes.NO))}
+                              disabled={this.props.facilitate[id] === true}
+                            />
+                          </Form.Field>
+                        </Form>
+                      </Table.Cell>
+                      <Table.Cell textAlign="center">
+                        <Checkbox checked={this.props.facilitate[id] === true} onChange={(e, data) => {
+                          this.props.dispatch(setFacilitate(id, data.checked));
+                          if (data.checked) {
+                            this.props.dispatch(setVote(id, voteTypes.YES));
+                          }
+                        }}/>
+                        <label className="facilitate-label">Facilitate</label>
+                      </Table.Cell>
+                    </Table.Row>
+                  )
+                }
+              </Table.Body>
+            </Table>
+          )
+        }
         <AddSession />
       </div>
     );
@@ -153,5 +159,6 @@ export default connect(
     voteStatus: state.vote.voteStatus,
     facilitate: state.facilitate.facilitate,
     facilitateStatus: state.facilitate.facilitateStatus,
+    fetchingSessions: state.session.fetchingSessions,
   })
 )(SessionsPage);

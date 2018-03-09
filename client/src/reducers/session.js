@@ -1,14 +1,21 @@
 import * as actionTypes from '../constants/actionTypes';
 
+<<<<<<< HEAD
 const defaultState = { sessions: [], sessionsUpdating: [] };
 
 export default function session(state = defaultState, action) {
+=======
+export default function session(state = { sessions: [], sessionsUpdating: [], fetchingSessions: false }, action) {
+>>>>>>> Add loading text when sessions are loading
   switch(action.type) {
     case actionTypes.RECEIVE_NEW_SESSION: {
       return { ...state, sessions: state.sessions.concat([action.payload.session]) };
     }
+    case actionTypes.START_FETCHING_SESSIONS: {
+      return { ...state, fetchingSessions: true };
+    }
     case actionTypes.RECEIVE_SESSIONS: {
-      return { ...state, sessions: action.payload.sessions };
+      return { ...state, sessions: action.payload.sessions, fetchingSessions: false };
     }
     case actionTypes.START_UPDATING_SESSION: {
       return { ...state, sessionsUpdating: state.sessionsUpdating.concat([action.payload.id]) };
