@@ -23,13 +23,12 @@ export const request = (method, route, data = null) => {
   return new Promise((resolve, reject) => {
     fetch(`${baseApiUrl}${route}`, requestConfiguration)
       .then((response) => {
-        if (!response.ok) {
+        if (response.status === 404) {
           reject(new Error(response.statusText));
           return;
         }
 
         if (response.status < 200 || (response.status >= 300 && response.status !== 304)) {
-        // if (!response.status.toString().startsWith('2')) {
           response.json().then(json => reject(new Error(json.error)));
           return;
         }
