@@ -53,7 +53,7 @@ class UsersStore extends Store {
   }
 
   async find(userId) {
-    let results = await this.database.query('SELECT * from Users WHERE userId = ?', [userId]);
+    let results = await this.database.query('SELECT * from Users WHERE id = ?', [userId]);
 
     if (results.length === 0) {
       throw new NotFoundError('User not found');
