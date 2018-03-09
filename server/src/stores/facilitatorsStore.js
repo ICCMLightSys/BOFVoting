@@ -8,11 +8,20 @@ class FacilitatorsStore extends Store {
         INNER JOIN Facilitators ON sessionId = Facilitators.sessionId
     `);
 
-    // TODO: this code is confuddling but I don't want to clean it up right now
-    return Promise.all(sessions.map(async ({ sessionId }) => ({
-      sessionId,
-      facilitators: (await this.database.query('SELECT userId FROM Facilitators WHERE sessionId = ?', [sessionId])).map(row => row.userId),
-    })));
+    const sessionIds = sessions.map(({ sessionId }) => sessionId);
+    const userIdResult = await this.database.query(
+      'SELECT userId, sessionId FROM Facilitators WHERE sessionId IN (?)',
+      [sessionIds]
+    );
+
+    return sessionIds.map(sessionId =>
+      ({
+        sessionId,
+        facilitators: userIdResult
+          .filter(row => row.sessionId === sessionId)
+          .map(row => row.userId),
+      })
+    );
   }
 }
 

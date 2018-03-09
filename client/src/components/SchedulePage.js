@@ -28,10 +28,6 @@ function renderLoadingSlot(roomName, i) {
 }
 
 class SchedulePage extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     this.props.dispatch(fetchConferences());
     this.props.dispatch(fetchSessions(this.props.conferenceId));
