@@ -19,7 +19,7 @@ const generateSchedule = (rooms, times, sessions, callback) => {
       return array;
     };
 
-    const sessionsIds = sessions.map(session => session.id);
+    const sessionsIds = Object.keys(this.userData.sessions);
     return shuffle(sessionsIds);
   };
 
@@ -29,6 +29,7 @@ const generateSchedule = (rooms, times, sessions, callback) => {
 
       for (let i = 0; i < numRows; i++) {
         for (let j = 0; j < numColumns; j++) {
+          if (j === 0) matrix[i] = [];
           matrix[i].push(array[i * numColumns + j]);
         }
       }
@@ -36,7 +37,7 @@ const generateSchedule = (rooms, times, sessions, callback) => {
       return matrix;
     };
 
-    const slotMatrix = arrayToMatrix(array, times.length, rooms.length);
+    const slotMatrix = arrayToMatrix(array, this.userData.times.length, this.userData.rooms.length);
 
     let score = 0;
 
@@ -49,17 +50,17 @@ const generateSchedule = (rooms, times, sessions, callback) => {
       let facilitatorCount = 0;
       for (let j = 0; j < slotMatrix[i].length; j++) {
         const sessionIndex = slotMatrix[i][j];
-        const yesUsers = sessions[sessionIndex].yesVoteUserIds;
-        yesCount = yesUsers.length;
+        const yesUsers = this.userData.sessions[sessionIndex].yesVoteUserIds;
+        yesCount += yesUsers.length;
         yesUsers.forEach(user => yesSet.add(user));
-        const altUsers = sessions[sessionIndex].altVoteUserIds;
-        alternateCount = altUsers.length;
+        const altUsers = this.userData.sessions[sessionIndex].altVoteUserIds;
+        alternateCount += altUsers.length;
         altUsers.forEach((user) => {
           if (yesSet.has(user)) alternateCount--;
           else alternateSet.add(user);
         });
-        const facilitatorUsers = sessions[sessionIndex].facilitatorUsersIds;
-        facilitatorCount = facilitatorUsers.length;
+        const facilitatorUsers = this.userData.sessions[sessionIndex].facilitatorUsersIds;
+        facilitatorCount += facilitatorUsers.length;
         facilitatorUsers.forEach(user => facilitatorSet.add(user));
       }
       score += 100 * (facilitatorCount - facilitatorSet.size) + (yesCount - yesSet.size) + 0.25 * (alternateCount - alternateSet.size);
@@ -93,10 +94,16 @@ const generateSchedule = (rooms, times, sessions, callback) => {
   };
 
   const config = {
-    iterations: 1000,
+    iterations: 100,
   };
 
-  genetic.evolve(config);
+  const userData = {
+    rooms,
+    times,
+    sessions,
+  };
+
+  genetic.evolve(config, userData);
 };
 
 module.exports = generateSchedule;

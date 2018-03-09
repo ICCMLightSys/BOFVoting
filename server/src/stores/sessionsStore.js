@@ -80,7 +80,7 @@ class SessionsStore extends Store {
   }
 
   async findTopSessions(conferenceId, numSessions) {
-    const sessions = this.findAll(conferenceId);
+    const sessions = await this.findAll(conferenceId);
 
     const forcedSessions = sessions.filter(({ forced }) => forced);
 

@@ -6,13 +6,17 @@ const generateSchedule = require('../modules/scheduler');
 const router = express.Router();
 
 router.post('/conferences/:conferenceId/generateSchedule', requireAuthentication, requireUserToBeAdmin, async (req, res) => {
-  // TODO Generate schedule
-  const rooms = req.rooms.findAll(req.conferenceId);
-  const times = req.times.findAll(req.conferenceId);
-  const sessions = req.sessions.findTopSessions(req.conferenceId, rooms.length * times.length);
+  const rooms = await req.rooms.findAll(req.params.conferenceId);
+  const times = await req.times.findAll(req.params.conferenceId);
+  const sessions = await req.sessions.findTopSessions(req.params.conferenceId, rooms.length * times.length);
+  const sessionsObject = sessions.reduce((map, obj) => {
+    map[obj.id] = obj;
+    return map;
+  }, {});
 
   await new Promise((resolve) => {
-    generateSchedule(rooms, times, sessions, (pop, gen, stats) => {
+    generateSchedule(rooms, times, sessionsObject, (pop, gen, stats) => {
+      console.log(pop[0]);
       resolve({ pop, gen, stats });
     });
   });
