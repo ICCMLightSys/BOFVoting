@@ -2,6 +2,10 @@ import * as actionTypes from '../constants/actionTypes';
 import { request } from './request';
 import { fetchRooms } from './room';
 import { fetchTimes } from './time';
+import {fetchConferences} from "./conference";
+import {fetchSessions} from "./session";
+import {fetchFacilitators} from "./facilitate";
+import {fetchUsers} from "./user";
 
 export const fetchSlots = (conferenceId) => {
   return async (dispatch) => {
@@ -31,8 +35,12 @@ export const generateSchedule = () => async (dispatch, getState) => {
   const method = 'POST';
   const route = `/conferences/${conferenceId}/generateSchedule`;
   try {
-    const response = await request(method, route);
-    console.log(response);
+    await request(method, route);
+    this.props.dispatch(fetchConferences());
+    this.props.dispatch(fetchSessions(this.props.conferenceId));
+    this.props.dispatch(fetchSlots(this.props.conferenceId));
+    this.props.dispatch(fetchFacilitators());
+    this.props.dispatch(fetchUsers());
   } catch (error) {
     console.log(error);
   }

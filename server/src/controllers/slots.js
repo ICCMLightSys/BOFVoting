@@ -14,12 +14,15 @@ router.post('/conferences/:conferenceId/generateSchedule', requireAuthentication
     return map;
   }, {});
 
-  await new Promise((resolve) => {
-    generateSchedule(rooms, times, sessionsObject, (pop, gen, stats) => {
+  const scheduledSessions = await new Promise((resolve) => {
+    generateSchedule(rooms, times, sessionsObject, (pop, gen) => {
       console.log(pop[0]);
-      resolve({ pop, gen, stats });
+      resolve(gen[0].entity);
     });
   });
+
+  await req.slots.removeAll(req.params.conferenceId);
+  await req.slots.assignSessionsToSlots(scheduledSessions, rooms, times);
 
   res.status(204).send();
 });

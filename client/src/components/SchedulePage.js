@@ -1,8 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Table } from 'semantic-ui-react';
+import { Button, Table } from 'semantic-ui-react';
 import { fetchSessions } from '../actions/session';
-import { fetchSlots } from '../actions/slot';
+import { fetchSlots, generateSchedule } from '../actions/slot';
 import { fetchConferences } from '../actions/conference';
 import { fetchFacilitators } from '../actions/facilitate';
 import { fetchUsers } from '../actions/user';
@@ -104,7 +104,7 @@ class SchedulePage extends Component {
     return (
       <div>
         <h2>Conference Schedule - {this.props.conferenceName}</h2>
-
+        <Button onClick={() => this.props.dispatch(generateSchedule())}>Generate Schedule</Button>
         { this.props.times.map(this.renderTime.bind(this)) }
       </div>
     );
