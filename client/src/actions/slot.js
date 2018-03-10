@@ -42,6 +42,7 @@ export const generateSchedule = () => async (dispatch, getState) => {
     dispatch(fetchSlots(conferenceId));
     dispatch(fetchFacilitators());
     dispatch(fetchUsers());
+    dispatch(finishGeneratingSchedule());
   } catch (error) {
     console.log(error);
   }
