@@ -7,6 +7,10 @@ import { fetchConferences } from '../actions/conference';
 import { fetchFacilitators } from '../actions/facilitate';
 import { fetchUsers } from '../actions/user';
 
+function compareTimes(timeA, timeB) {
+  return timeA.idx - timeB.idx;
+}
+
 function renderEmptySlot(roomName, i) {
   return (
     <Table.Row key={`empty-${i}`}>
@@ -108,7 +112,7 @@ class SchedulePage extends Component {
           this.props.generatingSchedule ? (
             <h2>Loading...</h2>
           ) : (
-            this.props.times.map(this.renderTime.bind(this))
+            this.props.times.sort(compareTimes).map(this.renderTime.bind(this))
           )
         }
       </div>

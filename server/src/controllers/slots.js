@@ -15,9 +15,8 @@ router.post('/conferences/:conferenceId/generateSchedule', requireAuthentication
   }, {});
 
   const scheduledSessions = await new Promise((resolve) => {
-    generateSchedule(rooms, times, sessionsObject, (pop, gen) => {
-      console.log(pop[0]);
-      resolve(gen[0].entity);
+    generateSchedule(rooms, times, sessionsObject, (pop) => {
+      resolve(pop[0].entity);
     });
   });
 
