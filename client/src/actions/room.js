@@ -20,3 +20,27 @@ export const failFetchRooms = (error) => {
 const receiveRooms = (rooms) => {
   return { type: actionTypes.RECEIVE_ROOMS, payload: rooms };
 };
+
+export const addRoom = (name) => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const conferenceId = state.conference.conferenceId;
+    const method = 'POST';
+    const route = `/conferences/${conferenceId}/rooms`;
+    const data = { name };
+    try {
+      const room = await request(method, route, data);
+      dispatch(receiveRoom(room));
+    } catch (error) {
+      dispatch(failAddRoom(error));
+    }
+  }
+};
+
+const receiveRoom = (room) => {
+  return { type: actionTypes.RECEIVE_ROOM, payload: { room } };
+};
+
+export const failAddRoom = (error) => {
+  return { type: actionTypes.FAIL_ADD_ROOM, payload: { error } };
+};

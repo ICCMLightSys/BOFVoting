@@ -53,7 +53,11 @@ export const FAIL_FETCH_SLOTS = 'FAIL_FETCH_SLOTS';
 // times
 export const RECEIVE_TIMES = 'RECEIVE_TIMES';
 export const FAIL_FETCH_TIMES = 'FAIL_FETCH_TIMES';
+export const RECEIVE_TIME = 'RECEIVE_TIME';
+export const FAIL_ADD_TIME = 'FAIL_ADD_TIME';
 
 // rooms
 export const RECEIVE_ROOMS = 'RECEIVE_ROOMS';
 export const FAIL_FETCH_ROOMS = 'FAIL_FETCH_ROOMS';
+export const RECEIVE_ROOM = 'RECEIVE_ROOM';
+export const FAIL_ADD_ROOM = 'FAIL_ADD_ROOM';

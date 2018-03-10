@@ -4,6 +4,8 @@ import { Dropdown, Form, Icon, Table } from 'semantic-ui-react';
 import { fetchConferences, patchConference } from '../actions/conference';
 import { fetchSessions } from '../actions/session';
 import { fetchVotes } from '../actions/vote';
+import { addRoom, fetchRooms } from '../actions/room';
+import { addTime, fetchTimes } from '../actions/time';
 
 class SiteAdminPage extends Component {
   constructor(props) {
@@ -29,6 +31,8 @@ class SiteAdminPage extends Component {
     this.props.dispatch(fetchConferences());
     this.props.dispatch(fetchSessions(this.props.conferenceId));
     this.props.dispatch(fetchVotes(this.props.conferenceId));
+    this.props.dispatch(fetchRooms(this.props.conferenceId));
+    this.props.dispatch(fetchTimes(this.props.conferenceId));
     if(this.props.conference !== undefined) {
       const { name, year, iccmEdition, maxVotes } = this.props.conference;
       this.setState({ name, year, iccmEdition, maxVotes });
@@ -94,12 +98,12 @@ class SiteAdminPage extends Component {
 
           <Table.Body>
             {
-              this.props.rooms.map((room, i) => (
-                <Table.Row key={i}>
+              this.props.rooms.map(room => (
+                <Table.Row key={room.id}>
                   <Table.Cell textAlign="center">
                     <Form>
                       <Form.Field>
-                        <input placeholder="Room name" defaultValue={room} />
+                        <input placeholder="Room name" defaultValue={room.name} />
                       </Form.Field>
                     </Form>
                   </Table.Cell>
@@ -127,8 +131,14 @@ class SiteAdminPage extends Component {
           </Table.Body>
         </Table>
         <div className="add-room-and-rounds-container">
-          <Form.Input className="add-room-and-rounds-textbox" placeholder="Enter a room name" />
-          <Form.Button color="green" type="submit" onClick={this.handleEditRoomsSubmit}>
+          <Form.Input className="add-room-and-rounds-textbox" placeholder="Enter a room name"
+            onChange={(e, data) => {
+              this.setState({ newRoomField: data.value });
+            }} />
+          <Form.Button color="green" type="submit" onClick={() => {
+            this.props.dispatch(addRoom(this.state.newRoomField));
+            this.setState({ newRoomField: '' });
+          }}>
             <Icon name='plus'/>&nbsp;&nbsp;Add
           </Form.Button>
         </div>
@@ -145,19 +155,19 @@ class SiteAdminPage extends Component {
 
           <Table.Body>
             {
-              this.props.rounds.map((round, i) => (
-                <Table.Row key={i}>
+              this.props.rounds.map(round => (
+                <Table.Row key={round.id}>
                   <Table.Cell>
                     <Form>
                       <Form.Field>
-                        <input type="number" placeholder='#' defaultValue={i + 1} />
+                        <input type="number" placeholder='#' defaultValue={round.idx} />
                       </Form.Field>
                     </Form>
                   </Table.Cell>
                   <Table.Cell textAlign="center">
                     <Form>
                       <Form.Field>
-                        <input placeholder="Round name" defaultValue={round} />
+                        <input placeholder="Round name" defaultValue={round.name} />
                       </Form.Field>
                     </Form>
                   </Table.Cell>
@@ -185,9 +195,18 @@ class SiteAdminPage extends Component {
           </Table.Body>
         </Table>
         <div className="add-room-and-rounds-container">
-          <Form.Input className="add-room-and-rounds-textbox" placeholder="Enter a round number" />
-          <Form.Input className="add-room-and-rounds-textbox" placeholder="Enter a round name" />
-          <Form.Button color="green" type="submit" onClick={this.handleEditRoomsSubmit}>
+          <Form.Input type="number" className="add-room-and-rounds-textbox" placeholder="Enter a round number"
+            onChange={(e, data) => {
+              this.setState({ newRoundNumberField: data.value });
+            }} />
+          <Form.Input className="add-room-and-rounds-textbox" placeholder="Enter a round name"
+            onChange={(e, data) => {
+              this.setState({ newRoundNameField: data.value });
+            }} />
+          <Form.Button color="green" type="submit" onClick={() => {
+            this.props.dispatch(addTime(this.state.newRoundNameField, parseInt(this.state.newRoundNumberField)));
+            this.setState({ newRoundNameField: '', newRoundNumberField: 0 });
+          }}>
             <Icon name='plus'/>&nbsp;&nbsp;Add
           </Form.Button>
         </div>
@@ -200,8 +219,7 @@ export default connect(
   state => ({
     conference: state.conference.conferences.find(conference => conference.id === state.conference.conferenceId),
     conferenceId: state.conference.conferenceId,
-    rooms: ['Room 1', 'Room 2', 'Room 3', 'Room 4', 'Room 5'],
-    rounds: ['Round 1', 'Round 2', 'Round 3', 'Round 4', 'Round 5'],
-
+    rooms: state.room,
+    rounds: state.time,
   })
 )(SiteAdminPage);
