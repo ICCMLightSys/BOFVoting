@@ -82,7 +82,6 @@ class SchedulePage extends Component {
     return (
       <Fragment key={time.id}>
         <h4>{ time.name }</h4>
-
         <Table>
           <Table.Header>
             <Table.Row textAlign="center">
@@ -105,7 +104,13 @@ class SchedulePage extends Component {
       <div>
         <h2>Conference Schedule - {this.props.conferenceName}</h2>
         <Button onClick={() => this.props.dispatch(generateSchedule())}>Generate Schedule</Button>
-        { this.props.times.map(this.renderTime.bind(this)) }
+        {
+          this.props.generatingSchedule ? (
+            <h2>Loading...</h2>
+          ) : (
+            this.props.times.map(this.renderTime.bind(this))
+          )
+        }
       </div>
     );
   }
@@ -120,10 +125,11 @@ const mapStateToProps = (state) => {
     conferenceName: currentConference ? currentConference.name : 'Loading...',
     times: state.time.filter(time => time.conferenceId === conferenceId),
     rooms: state.room.filter(room => room.conferenceId === conferenceId),
-    slots: state.slot.filter(slot => slot.conferenceId === conferenceId),
+    slots: state.slot.slots.filter(slot => slot.conferenceId === conferenceId),
     sessions: state.session.sessions.filter(session => session.conferenceId === conferenceId),
     facilitators: state.facilitate.facilitators,
     users: state.user.users,
+    generatingSchedule: state.slot.generatingSchedule,
   };
 };
 

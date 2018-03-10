@@ -34,14 +34,24 @@ export const generateSchedule = () => async (dispatch, getState) => {
   const conferenceId = state.conference.conferenceId;
   const method = 'POST';
   const route = `/conferences/${conferenceId}/generateSchedule`;
+  dispatch(startGeneratingSchedule());
   try {
     await request(method, route);
-    this.props.dispatch(fetchConferences());
-    this.props.dispatch(fetchSessions(this.props.conferenceId));
-    this.props.dispatch(fetchSlots(this.props.conferenceId));
-    this.props.dispatch(fetchFacilitators());
-    this.props.dispatch(fetchUsers());
+    dispatch(fetchConferences());
+    dispatch(fetchSessions(this.props.conferenceId));
+    dispatch(fetchSlots(this.props.conferenceId));
+    dispatch(fetchFacilitators());
+    dispatch(fetchUsers());
+    dispatch(finishGeneratingSchedule());
   } catch (error) {
     console.log(error);
   }
+};
+
+export const startGeneratingSchedule = () => {
+  return { type: actionTypes.START_GENERATING_SCHEDULE };
+};
+
+export const finishGeneratingSchedule = () => {
+  return { type: actionTypes.FINISH_GENERATING_SCHEDULE };
 };
