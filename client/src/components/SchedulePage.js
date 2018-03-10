@@ -7,6 +7,10 @@ import { fetchConferences } from '../actions/conference';
 import { fetchFacilitators } from '../actions/facilitate';
 import { fetchUsers } from '../actions/user';
 
+function compareTimes(timeA, timeB) {
+  return timeA.idx - timeB.idx;
+}
+
 function renderEmptySlot(roomName, i) {
   return (
     <Table.Row key={`empty-${i}`}>
@@ -104,8 +108,9 @@ class SchedulePage extends Component {
     return (
       <div>
         <h2>Conference Schedule - {this.props.conferenceName}</h2>
+
         <Button onClick={() => this.props.dispatch(generateSchedule())}>Generate Schedule</Button>
-        { this.props.times.map(this.renderTime.bind(this)) }
+        { this.props.times.sort(compareTimes).map(this.renderTime.bind(this)) }
       </div>
     );
   }
