@@ -36,11 +36,11 @@ export const generateSchedule = () => async (dispatch, getState) => {
   const route = `/conferences/${conferenceId}/generateSchedule`;
   try {
     await request(method, route);
-    this.props.dispatch(fetchConferences());
-    this.props.dispatch(fetchSessions(this.props.conferenceId));
-    this.props.dispatch(fetchSlots(this.props.conferenceId));
-    this.props.dispatch(fetchFacilitators());
-    this.props.dispatch(fetchUsers());
+    dispatch(fetchConferences());
+    dispatch(fetchSessions(conferenceId));
+    dispatch(fetchSlots(conferenceId));
+    dispatch(fetchFacilitators());
+    dispatch(fetchUsers());
   } catch (error) {
     console.log(error);
   }

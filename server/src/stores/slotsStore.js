@@ -14,7 +14,7 @@ class SlotsStore extends Store {
     return this.database.query(`
       DELETE sl.* FROM Slots sl
       INNER JOIN Sessions se
-      ON sl.conferenceId = se.conferenceId
+      ON sl.sessionId = se.id
       WHERE se.conferenceId = ?
     `, [conferenceId]
     );
